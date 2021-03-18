@@ -1,7 +1,36 @@
-#!/usr/bin/env perl
+my @filenames = grep { !/-/ } @ARGV;
+my @keys = map { split (//, substr $_, 1, length $_) } grep { /-/ } @ARGV; 
+my %keys_hash = map { $_ => 1 } @keys;
 
-use 5.016;
-use warnings;
-# use Getopt::Long; # для обработки аргументов
+if(%keys_hash{'M'} and %keys_hash{'n'}) { die "options '-Mn' are incompatible" };
 
-print <>;
+#print "filenames : @filenames $#filenames \n";
+#print "keys : @keys $#keys \n";
+
+@input;
+if ($#filenames+1) {
+    for (@filenames) { 
+    	open(fh, '<', $_) or die $!; 
+    	push @input, <fh>;
+	}
+} else {
+    @input = <STDIN>;
+}
+
+@input = sort @input;
+
+%uniq;
+if ($keys_hash{'u'}) { @input = grep { !$uniq{$_}++ } @input };
+
+if ($keys_hash{'n'}) { @input = sort { $a <=> $b} @input };
+
+if ($keys_hash{'M'}) {
+	%mon = (jan => 1, feb => 2, mar => 3, apr => 4, may => 5, jun => 6, jul => 7, aug => 8, sep => 9, oct => 10, nov => 11, dec => 12);
+	%months = (january => 1, february => 2, march => 3, april => 4, may => 5, june => 6, july => 7, august => 8, september => 9, october => 10, november => 11, december => 12);
+	@input = sort { ($mon{lc($a)} or $months{lc($a)}) <=> ($mon{lc($b)} or $months{lc($b)}) } @input; 
+}
+
+
+if ($keys_hash{'r'}) { @input = reverse @input };
+print @input;
+
