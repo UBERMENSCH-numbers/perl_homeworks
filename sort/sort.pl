@@ -2,8 +2,10 @@ use strict;
 
 sub comp_q ($$) {
 	my ($a,$b) = @_;
-	$a =~ tr/'"\\t\///d;
-	$b =~ tr/'"\\t\///d;
+	$a =~ tr/'"//d;
+	$b =~ tr/'"//d;
+	$a =~ s/\t//g;
+	$b =~ s/\t//g;
 	return uc $a cmp uc $b;
 }
 
@@ -24,10 +26,10 @@ if ($filenames[0]) {
     @input = <STDIN>;
 }
 
-# my @data = sort {
-# 				comp_q($a, $b)
-# 						||
-# 				$b cmp $a} @input;
+my @data = sort {
+				comp_q($a, $b)
+						||
+				$b cmp $a} @input;
 
 
 # my %uniq;
@@ -42,8 +44,5 @@ if ($filenames[0]) {
 # }
 
 # if ($keys_hash{'r'}) { @input = reverse @input };
-# print @data;
+print @data;
 
-
-$a = exec "sort $filenames[0]";
-print $a;
