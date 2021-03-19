@@ -1,17 +1,17 @@
 use strict;
 
-sub cmp_q ($$) {
-	my ($a,$b) = @_;
-	$a =~ tr/\$#@~!&*()[];.,:?^`"\\\///d;
-	$b =~ tr/\$#@~!&*()[];.,:?^`"\\\///d;
-	return $a cmp $b;
-}
+# sub cmp_q ($$) {
+# 	my ($a,$b) = @_;
+# 	$a =~ tr/\$#@~!&*()[];.,:?^`"\\\///d;
+# 	$b =~ tr/\$#@~!&*()[];.,:?^`"\\\///d;
+# 	return $a cmp $b;
+# }
 
 my @filenames = grep { !/-/ } @ARGV;
 my @keys = map { split (//, substr $_, 1, length $_) } grep { /-/ } @ARGV;
 my %keys_hash = map { $_ => 1 } @keys;
 
-if(%keys_hash{'M'} and %keys_hash{'n'}) { die "options '-Mn' are incompatible" };
+# if(%keys_hash{'M'} and %keys_hash{'n'}) { die "options '-Mn' are incompatible" };
 
 # print "filenames : @filenames $#filenames \n";
 # print "keys : @keys $#keys \n";
@@ -26,9 +26,10 @@ if ($#filenames+1) {
     @input = <STDIN>;
 }
 
-my @data = @input;
+my @data = sort {lc $a cmp lc $b 
+						||
+				$b cmp $a} @input;
 
-@data = sort {cmp_q($a, $b) } @data;
 
 my %uniq;
 if ($keys_hash{'u'}) { @input = grep { !$uniq{$_}++ } @input };
