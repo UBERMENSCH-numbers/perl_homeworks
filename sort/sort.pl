@@ -14,6 +14,7 @@ my %keys_hash = map { $_ => 1 } @keys;
 # print "filenames : @filenames $#filenames \n";
 # print "keys : @keys $#keys \n";
 
+
 my @input;
 if ($filenames[0]) {
     open(fh, '<', $filenames[0]) or die $!;
@@ -22,12 +23,18 @@ if ($filenames[0]) {
     @input = <STDIN>;
 }
 
-
 chomp $_ for (@input);
+
+my %uniq;
+if ($keys_hash{'u'}) { @input = grep { !$uniq{$_}++ } @input };
 
 my @input = sort { fc $a cmp fc $b || $b cmp $a } @input;
 
+if ($keys_hash{'n'}) { @input = sort { $a <=> $b} @input };
 
+
+
+if ($keys_hash{'r'}) { @input = reverse @input };
 
 print join("\n", @input);
 
