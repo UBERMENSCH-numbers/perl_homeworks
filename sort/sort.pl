@@ -1,12 +1,13 @@
 use strict;
+use feature 'fc';
 
 sub comp_q ($$) {
 	my ($a,$b) = @_;
-	$a =~ tr/'"//d;
-	$b =~ tr/'"//d;
+	$a =~ tr/'" //d;
+	$b =~ tr/'" //d;
 	$a =~ s/\t//g;
 	$b =~ s/\t//g;
-	return uc $a cmp uc $b;
+	return (fc($a) cmp fc($b)) || $b cmp $a || @_[0] cmp @_[1];
 }
 
 my @filenames = grep { !/-/ } @ARGV;
