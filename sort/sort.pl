@@ -1,11 +1,11 @@
+#!/usr/bin/env perl
 
 use 5.016;
 use warnings;
 use strict;
 use feature 'fc';
-#!/usr/bin/env perl
 
-sub comp_q ($$) {	
+sub comp_q ($$) {
 	my ($a,$b) = @_;
 	my ($a_,$b_) = @_;
 	$a =~ tr/'" \t//d;
