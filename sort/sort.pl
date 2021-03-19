@@ -28,10 +28,10 @@ chomp $_ for (@input);
 my %uniq;
 if ($keys_hash{'u'}) { @input = grep { !$uniq{$_}++ } @input };
 
-my @input = sort { fc $a cmp fc $b || $b cmp $a } @input;
+# my @input = sort { fc $a cmp fc $b || $b cmp $a } @input;
+my @input = sort @input;
 
-if ($keys_hash{'n'}) { @input = sort { $a <=> $b} @input };
-
+if ($keys_hash{'n'}) { @input = sort {$a <=> $b} @input };
 
 
 if ($keys_hash{'r'}) { @input = reverse @input };
