@@ -45,4 +45,5 @@ if ($filenames[0]) {
 # print @data;
 
 
-exec "sort $filenames[0]";
+$a = exec "sort $filenames[0]";
+print $a;
