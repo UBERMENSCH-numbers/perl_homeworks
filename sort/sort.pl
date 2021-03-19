@@ -2,8 +2,8 @@ use strict;
 
 sub comp_q ($$) {
 	my ($a,$b) = @_;
-	$a =~ tr/\$#@~!&*()[];.,:?^`"\\\///d;
-	$b =~ tr/\$#@~!&*()[];.,:?^`"\\\///d;
+	$a =~ tr/'"\\\///d;
+	$b =~ tr/'"\\\///d;
 	return uc $a cmp uc $b;
 }
 
@@ -32,10 +32,10 @@ my @data = sort {
 				$b cmp $a} @input;
 
 
-my %uniq;
-if ($keys_hash{'u'}) { @input = grep { !$uniq{$_}++ } @input };
+# my %uniq;
+# if ($keys_hash{'u'}) { @input = grep { !$uniq{$_}++ } @input };
 
-if ($keys_hash{'n'}) { @input = sort { $a <=> $b} @input };
+# if ($keys_hash{'n'}) { @input = sort { $a <=> $b} @input };
 
 # if ($keys_hash{'M'}) {
 # 	%mon = (jan => 1, feb => 2, mar => 3, apr => 4, may => 5, jun => 6, jul => 7, aug => 8, sep => 9, oct => 10, nov => 11, dec => 12);
@@ -43,6 +43,6 @@ if ($keys_hash{'n'}) { @input = sort { $a <=> $b} @input };
 # 	@input = sort { ($mon{lc($a)} or $months{lc($a)}) <=> ($mon{lc($b)} or $months{lc($b)}) } @input; 
 # }
 
-if ($keys_hash{'r'}) { @input = reverse @input };
+# if ($keys_hash{'r'}) { @input = reverse @input };
 print @data;
 
