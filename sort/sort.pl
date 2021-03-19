@@ -2,8 +2,8 @@ use strict;
 
 sub comp_q ($$) {
 	my ($a,$b) = @_;
-	$a =~ tr/'"\\\///d;
-	$b =~ tr/'"\\\///d;
+	$a =~ tr/'"\\t\///d;
+	$b =~ tr/'"\\t\///d;
 	return uc $a cmp uc $b;
 }
 
@@ -17,19 +17,17 @@ my %keys_hash = map { $_ => 1 } @keys;
 # print "keys : @keys $#keys \n";
 
 my @input;
-if ($#filenames+1) {
-    for (@filenames) { 
-    	open(fh, '<', $_) or die $!;
-    	push @input, <fh>;
-	}
+if ($filenames[0]) {
+    open(fh, '<', $filenames[0]) or die $!;
+    push @input, <fh>;
 } else {
     @input = <STDIN>;
 }
 
-my @data = sort {
-				comp_q($a, $b)
-						||
-				$b cmp $a} @input;
+# my @data = sort {
+# 				comp_q($a, $b)
+# 						||
+# 				$b cmp $a} @input;
 
 
 # my %uniq;
@@ -44,5 +42,7 @@ my @data = sort {
 # }
 
 # if ($keys_hash{'r'}) { @input = reverse @input };
-print @data;
+# print @data;
 
+
+exec "sort $filenames[0]";
