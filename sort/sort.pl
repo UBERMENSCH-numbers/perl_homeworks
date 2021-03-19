@@ -3,11 +3,15 @@ use feature 'fc';
 
 sub comp_q ($$) {
 	my ($a,$b) = @_;
-	$a =~ tr/'" //d;
-	$b =~ tr/'" //d;
-	$a =~ s/\t//g;
-	$b =~ s/\t//g;
-	return (fc($a) cmp fc($b)) || $b cmp $a || @_[0] cmp @_[1];
+	my ($a_,$b_) = @_;
+	
+	$a =~ tr/'" \t%//d;
+	$b =~ tr/'" \t%//d;
+	$a_ =~ tr/\n//d;
+	$b_ =~ tr/\n//d;
+
+	# print @_[0] cmp @_[1], "@_[0] cmp @_[1]\n";
+	return (fc($a) cmp fc($b)) || ($b cmp $a) || $a_ cmp $b_ || (@_[0] cmp @_[1]);
 }
 
 my @filenames = grep { !/-/ } @ARGV;
