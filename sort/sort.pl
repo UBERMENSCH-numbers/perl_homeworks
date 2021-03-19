@@ -3,18 +3,18 @@ use 5.016;
 use warnings;
 use strict;
 use feature 'fc';
+#!/usr/bin/env perl
 
-sub comp_q ($$) {
+sub comp_q ($$) {	
 	my ($a,$b) = @_;
 	my ($a_,$b_) = @_;
-	
-	$a =~ tr/'" \t%//d;
-	$b =~ tr/'" \t%//d;
+	$a =~ tr/'" \t//d;
+	$b =~ tr/'" \t//d;
 	$a_ =~ tr/\n//d;
 	$b_ =~ tr/\n//d;
 
-	# print @_[0] cmp @_[1], "@_[0] cmp @_[1]\n";
-	return (fc($a) cmp fc($b)) || ($b cmp $a) || $a_ cmp $b_ || (@_[0] cmp @_[1]);
+	# print   "\n$_[0] cmp $_[1]\t", (fc($a) cmp fc($b)) || ($b cmp $a) || $a_ cmp $b_ || ($_[0] cmp $_[1]);
+	return (fc($a) cmp fc($b)) || ($b cmp $a) || $a_ cmp $b_ || ($_[0] cmp $_[1]);
 }
 
 sub chomp_($) {
