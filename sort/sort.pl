@@ -1,11 +1,11 @@
 use strict;
 
-# sub cmp_q ($$) {
-# 	my ($a,$b) = @_;
-# 	$a =~ tr/\$#@~!&*()[];.,:?^`"\\\///d;
-# 	$b =~ tr/\$#@~!&*()[];.,:?^`"\\\///d;
-# 	return $a cmp $b;
-# }
+sub comp_q ($$) {
+	my ($a,$b) = @_;
+	$a =~ tr/\$#@~!&*()[];.,:?^`"\\\///d;
+	$b =~ tr/\$#@~!&*()[];.,:?^`"\\\///d;
+	return uc $a cmp uc $b;
+}
 
 my @filenames = grep { !/-/ } @ARGV;
 my @keys = map { split (//, substr $_, 1, length $_) } grep { /-/ } @ARGV;
@@ -26,7 +26,8 @@ if ($#filenames+1) {
     @input = <STDIN>;
 }
 
-my @data = sort {lc $a cmp lc $b 
+my @data = sort {
+				comp_q($a, $b)
 						||
 				$b cmp $a} @input;
 
