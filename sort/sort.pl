@@ -1,13 +1,20 @@
 use strict;
 
+sub cmp_q ($$) {
+	my ($a,$b) = @_;
+	$a =~ tr/\$#@~!&*()[];.,:?^`"\\\///d;
+	$b =~ tr/\$#@~!&*()[];.,:?^`"\\\///d;
+	return $a cmp $b;
+}
+
 my @filenames = grep { !/-/ } @ARGV;
 my @keys = map { split (//, substr $_, 1, length $_) } grep { /-/ } @ARGV;
 my %keys_hash = map { $_ => 1 } @keys;
 
 if(%keys_hash{'M'} and %keys_hash{'n'}) { die "options '-Mn' are incompatible" };
 
-#print "filenames : @filenames $#filenames \n";
-#print "keys : @keys $#keys \n";
+# print "filenames : @filenames $#filenames \n";
+# print "keys : @keys $#keys \n";
 
 my @input;
 if ($#filenames+1) {
@@ -19,7 +26,9 @@ if ($#filenames+1) {
     @input = <STDIN>;
 }
 
-@input = sort @input;
+my @data = @input;
+
+@data = sort {cmp_q($a, $b) } @data;
 
 my %uniq;
 if ($keys_hash{'u'}) { @input = grep { !$uniq{$_}++ } @input };
@@ -32,7 +41,6 @@ if ($keys_hash{'n'}) { @input = sort { $a <=> $b} @input };
 # 	@input = sort { ($mon{lc($a)} or $months{lc($a)}) <=> ($mon{lc($b)} or $months{lc($b)}) } @input; 
 # }
 
-
 if ($keys_hash{'r'}) { @input = reverse @input };
-print @input;
+print @data;
 
