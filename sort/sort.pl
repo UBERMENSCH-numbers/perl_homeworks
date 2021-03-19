@@ -1,3 +1,6 @@
+
+use 5.016;
+use warnings;
 use strict;
 use feature 'fc';
 
@@ -12,6 +15,11 @@ sub comp_q ($$) {
 
 	# print @_[0] cmp @_[1], "@_[0] cmp @_[1]\n";
 	return (fc($a) cmp fc($b)) || ($b cmp $a) || $a_ cmp $b_ || (@_[0] cmp @_[1]);
+}
+
+sub chomp_($) {
+	my $a = shift;
+	return chomp $a;
 }
 
 my @filenames = grep { !/-/ } @ARGV;
@@ -31,10 +39,7 @@ if ($filenames[0]) {
     @input = <STDIN>;
 }
 
-my @data = sort {
-				comp_q($a, $b)
-						||
-				$b cmp $a} @input;
+my @data = sort {comp_q($a,$b)} @input;
 
 
 # my %uniq;
