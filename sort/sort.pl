@@ -52,7 +52,21 @@ if ($keys_hash{'M'}) {
 
 if ($keys_hash{'r'}) { @data = reverse @data };
 
-print join("\n", map {$_->[1]} @data);
+my @sorted = map {$_->[1]} @data;
+
+if (!$keys_hash{'c'}) {
+	print join("\n", @sorted);
+} else {
+	for my $i (0..$#sorted) {
+		my $sort_i = $sorted[$i];
+		my $input_i = $input[$i];
+		if ($sort_i cmp $input_i) {
+			print "disorder on line $i\n";
+			last;
+		}
+	}
+}
+
 
 
 
