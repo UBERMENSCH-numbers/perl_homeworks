@@ -43,7 +43,7 @@ if ($keys_hash{'k'}) {
 if ($keys_hash{'b'}) { $_->[0] =~ s/^\s+// for (@data) };
 
 if ($keys_hash{'h'}) {
-	@data = map { [ unsuffix($_->[0]) , $_->[1] ] } @data;
+	@data = map { [ unsuffix($_->[0]	) , $_->[1] ] } @data;
 	$keys_hash{'n'} = 1;
 }
 
