@@ -15,19 +15,30 @@ sub unsuffix($) {
 my @filenames = grep { !/-/ } @ARGV;
 my @keys = map { split (//, substr $_, 1, length $_) } grep { /-/ } @ARGV;
 my %keys_hash = map { $_ => 1 } @keys;
+my $col_ind = ( grep {/\d/} @keys )[0];
+
+print "filenames : @filenames \n";
+print "keys : @keys \n";
+print "col_ind : $col_ind \n";
 
 if(%keys_hash{'M'} and %keys_hash{'n'}) { die "options '-Mn' are incompatible" };
 
 my @input;
 if ($filenames[0]) {
-    open(fh, '<', $filenames[0]) or die $!;
-    push @input, <fh>;
+	open(fh, '<', $filenames[0]) or die $!;
+	push @input, <fh>;
 } else {
-    @input = <STDIN>;
+	@input = <STDIN>;
 }
 
 chomp $_ for (@input);
 my @data = map {[$_, $_]} @input;
+
+if ($keys_hash{'k'}) {
+	for (@data) {
+		$_->[0] = (split /[ \t]/, $_->[0])[$col_ind-1] ;
+	}
+}
 
 if ($keys_hash{'b'}) { $_->[0] =~ s/^\s+// for (@data) };
 
@@ -39,7 +50,7 @@ if ($keys_hash{'h'}) {
 my %uniq;
 if ($keys_hash{'u'}) { @data = grep { !$uniq{$_->[0]}++ } @data };
 
-my @data = sort {$a->[0] cmp $b->[0]} @data;
+my @data = sort {$a->[0] cmp $b->[0] } @data;
 
 if ($keys_hash{'n'}) { @data = sort { $a->[0] <=> $b->[0]} @data };
 
@@ -52,7 +63,7 @@ if ($keys_hash{'M'}) {
 
 if ($keys_hash{'r'}) { @data = reverse @data };
 
-my @sorted = map {$_->[1]} @data;
+my @sorted = map { $_->[1] } @data;
 
 if (!$keys_hash{'c'}) {
 	print join("\n", @sorted);
