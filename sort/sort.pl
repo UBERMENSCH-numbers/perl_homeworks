@@ -1,7 +1,6 @@
 #!/usr/bin/env perl
 use 5.016;
 use feature 'fc';
-use Data::Dumper;
 
 my @filenames = grep { !/-/ } @ARGV;
 my @keys = map { split (//, substr $_, 1, length $_) } grep { /-/ } @ARGV;
@@ -38,7 +37,6 @@ if ($keys_hash{'M'}) {
 
 if ($keys_hash{'r'}) { @data = reverse @data };
 
-# print Dumper(@data);
 print join("\n", map {$_->[1]} @data);
 
 
