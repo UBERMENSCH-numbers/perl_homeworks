@@ -47,7 +47,8 @@ sub clone {
 		for (keys %copy) { $copy{$_} = clone($copy{$_}) }
 		$cloned = \%copy;
 	} elsif (ref $orig eq "CODE") {
-		$cloned = $orig;
+		my \&copy = \&$orig;
+		$cloned = $copy;
 	} else {
 		$cloned = $orig;
 	}
