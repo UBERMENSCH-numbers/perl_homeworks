@@ -24,15 +24,17 @@ use Data::Dumper;
 local $Data::Dumper::Indent = 0;
 
 # В качестве значения $orig следует использовать какую либо сложую структуру.
-my $orig = {
-	sv => "string",
-	av => [ qw(some elements) ],
-	hv => {
-		nested => "value",
-		key => [ 1,2,{} ],
-	},
+my $orig = sub {
+	return "0";
 };
+
 my $cloned = DeepClone::clone($orig);
+
+$cloned = sub {
+	return 1;
+};
 
 say "ORIGINAL ", Dumper($orig);
 say "CLONED   ", Dumper($cloned);
+print $orig->();
+print $cloned->();
