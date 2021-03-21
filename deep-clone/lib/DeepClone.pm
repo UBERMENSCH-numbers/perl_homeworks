@@ -46,9 +46,12 @@ sub clone {
 		my %copy = %$orig;
 		for (keys %copy) { $copy{$_} = clone($copy{$_}) }
 		$cloned = \%copy;
-	} elsif (ref $orig eq "SCALAR") {
+	} elsif (ref $orig eq "CODE") {
+		$cloned = undef;
+	} else {
 		$cloned = $orig;
-	} 
+	}
+
 	return $cloned;
 }
 
