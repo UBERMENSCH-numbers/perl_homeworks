@@ -42,10 +42,12 @@ sub clone {
 		my @copy = @$orig;
 		for (@copy) { $_ = clone($_) }
 		$cloned = \@copy;
-	} elsif (ref $orig eq "HASH"){
+	} elsif (ref $orig eq "HASH") {
 		my %copy = %$orig;
 		for (keys %copy) { $copy{$_} = clone($copy{$_}) }
 		$cloned = \%copy;
+	} elsif (ref $orig eq "CODE") {
+		$cloned = $orig;
 	} else {
 		$cloned = $orig;
 	}
