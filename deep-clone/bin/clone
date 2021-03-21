@@ -33,9 +33,5 @@ my $orig = {
 	},
 };
 my $cloned = DeepClone::clone($orig);
-
-$cloned->{sv} = "1";
-$cloned->{av}[1] = "121212112";
-
 say "ORIGINAL ", Dumper($orig);
 say "CLONED   ", Dumper($cloned);
