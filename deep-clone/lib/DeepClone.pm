@@ -38,9 +38,17 @@ sub clone {
 	my $orig = shift;
 	my $cloned;
 
-	# ...
-	# deep clone algorithm here
-	# ...
+	if (ref $orig eq "ARRAY") {
+		my @copy = @$orig;
+		for (@copy) { $_ = clone($_) }
+		$cloned = \@copy;
+	} elsif (ref $orig eq "HASH"){
+		my %copy = %$orig;
+		for (keys %copy) { $copy{$_} = clone($copy{$_}) }
+		$cloned = \%copy;
+	} else {
+		$cloned = $orig;
+	}
 
 	return $cloned;
 }
