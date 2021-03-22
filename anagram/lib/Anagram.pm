@@ -3,7 +3,6 @@ package Anagram;
 
 use 5.016;
 use warnings;
-use Data::Dumper;
 
 =encoding UTF8
 
@@ -58,7 +57,10 @@ sub anagram {
 
 	for (keys %result) {
 		my $val = delete $result{$_};
-		if (scalar @$val > 1) { $result{$val->[0]} = $val };
+		if (scalar @$val > 1) { 
+			$result{$val->[0]} = $val;
+			$result{$val->[0]} = [sort @{$val}];
+		}
 	}
 
 	return \%result;
