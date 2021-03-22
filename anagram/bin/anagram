@@ -24,15 +24,23 @@ use FindBin;
 use Data::Dumper;
 use lib "$FindBin::Bin/../lib";
 use Anagram;
-
+use Encode;
 use utf8;
 
+binmode(STDIN,':utf8');
 binmode(STDOUT,':utf8');
+
 
 my @list = map {
 	my @v = split /\s+/, $_;
 	@v == 1 ? $v[0] : \@v;
 } grep { chomp; /\S/ } <>;
 
+
+
+# say map {lc} grep /юнко./, @list;
+
 my $result = Anagram::anagram(\@list);
+
+
 say "$_: @{$result->{$_}}" for sort keys %$result;

@@ -4,7 +4,6 @@ package Anagram;
 use 5.016;
 use warnings;
 use utf8;
-use Encode qw(encode decode);
 
 =encoding UTF8
 
@@ -44,7 +43,7 @@ anagram(['пятак', 'ЛиСток', 'пятка', 'стул', 'ПяТаК', '
 
 sub anagram {
 
-	my @words_list = map { lc decode('utf8', $_) } @{+shift};
+	my @words_list = map { lc  } @{+shift};
 
 	my %uniq;
 	@words_list = grep { !$uniq{lc $_}++ } @words_list;
