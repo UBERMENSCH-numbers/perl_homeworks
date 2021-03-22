@@ -44,14 +44,13 @@ anagram(['пятак', 'ЛиСток', 'пятка', 'стул', 'ПяТаК', '
 
 sub anagram {
 
-	my @words_list = map {decode('utf8', $_)} @{+shift};
-	for (@words_list) { $_ = lc $_ };
+	my @words_list = map { lc decode('utf8', $_) } @{+shift};
+
 	my %uniq;
 	@words_list = grep { !$uniq{lc $_}++ } @words_list;
 
 	my %result = map { (join '', sort split //) => [] } @words_list;
 
-	my %anagram;
 	for (@words_list) {
 		my $sorted = join '', sort split //;
 		if ($result{$sorted}) { push(@{$result{$sorted}}, $_) };
