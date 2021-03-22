@@ -3,6 +3,8 @@ package Anagram;
 
 use 5.016;
 use warnings;
+use utf8;
+use Encode qw(encode decode);
 
 =encoding UTF8
 
@@ -42,7 +44,7 @@ anagram(['пятак', 'ЛиСток', 'пятка', 'стул', 'ПяТаК', '
 
 sub anagram {
 
-	my @words_list = @{+shift};
+	my @words_list = map {decode('utf8', $_)} @{+shift};
 	for (@words_list) { $_ = lc $_ };
 	my %uniq;
 	@words_list = grep { !$uniq{lc $_}++ } @words_list;
@@ -58,7 +60,6 @@ sub anagram {
 	for (keys %result) {
 		my $val = delete $result{$_};
 		if (scalar @$val > 1) { 
-			$result{$val->[0]} = $val;
 			$result{$val->[0]} = [sort @{$val}];
 		}
 	}
