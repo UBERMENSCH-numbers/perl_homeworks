@@ -3,8 +3,10 @@ package Anagram;
 
 use 5.016;
 use warnings;
+use Data::Dumper;
 
 =encoding UTF8
+
 
 =head1 SYNOPSIS
 
@@ -40,13 +42,25 @@ anagram(['пятак', 'ЛиСток', 'пятка', 'стул', 'ПяТаК', '
 =cut
 
 sub anagram {
-	my $words_list = shift;
-	my %result;
-	
-	#
-	# Поиск анаграмм
-	#
-	
+
+	my @words_list = @{+shift};
+	for (@words_list) { $_ = lc $_ };
+	my %uniq;
+	@words_list = grep { !$uniq{lc $_}++ } @words_list;
+
+	my %result = map { (join '', sort split //) => [] } @words_list;
+
+	my %anagram;
+	for (@words_list) {
+		my $sorted = join '', sort split //;
+		if ($result{$sorted}) { push(@{$result{$sorted}}, $_) };
+	}
+
+	for (keys %result) {
+		my $val = delete $result{$_};
+		if (scalar @$val > 1) { $result{$val->[0]} = $val };
+	}
+
 	return \%result;
 }
 
