@@ -41,12 +41,14 @@ anagram(['пятак', 'ЛиСток', 'пятка', 'стул', 'ПяТаК', '
 
 =cut
 
+
+	# my %uniq;
+	# my @words_list = map { $uniq{lc $_}++ ? "" : lc $_ } @{+shift};
+
 sub anagram {
 
-	my @words_list = map { lc  } @{+shift};
-
-	my %uniq;
-	@words_list = grep { !$uniq{lc $_}++ } @words_list;
+	my $words_hash = { map { lc $_ => 1 } @{+shift} };
+	my @words_list = keys %$words_hash;
 
 	my %result = map { (join '', sort split //) => [] } @words_list;
 
