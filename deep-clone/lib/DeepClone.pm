@@ -56,7 +56,7 @@ sub clone {
 	} elsif (ref $orig eq "CODE") {
 		$cloned = undef;
 	} else {
-		# $cloned = $orig;
+		$cloned = $orig;
 	}
 
 	return $cloned;
