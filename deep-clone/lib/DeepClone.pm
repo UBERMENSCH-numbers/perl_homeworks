@@ -42,7 +42,10 @@ sub clone {
 	if (ref $orig eq "ARRAY") {
 		my @copy = @$orig;
 		for (@copy) {
-			if ($_ == $orig) { $_ = \@copy };
+			if ($_ == $orig) {
+				$_ = \@copy;
+			} else {$_ = clone($_) };
+
 		}
 		$cloned = \@copy;
 	} elsif (ref $orig eq "HASH") {
