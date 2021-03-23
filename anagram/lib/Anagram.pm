@@ -48,7 +48,7 @@ anagram(['пятак', 'ЛиСток', 'пятка', 'стул', 'ПяТаК', '
 sub anagram {
 
 	my $words_hash = { map { lc $_ => 1 } @{+shift} };
-	my @words_list = keys %$words_hash;
+	my @words_list = sort keys %$words_hash;
 
 	my %result = map { (join '', sort split //) => [] } @words_list;
 
