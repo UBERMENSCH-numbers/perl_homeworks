@@ -34,27 +34,30 @@ use warnings;
 
 =cut
 
+
 sub clone {
 	my $orig = shift;
 	my $cloned;
 
 	if (ref $orig eq "ARRAY") {
 		my @copy = @$orig;
-		for (@copy) { 
-			say $_;
-			if ($_ != $orig) { $_ = clone($_) };
+		for (@copy) {
+			if ($_ != $orig) {
+				$_ = clone($_);
+			} else { $_ = \@copy };
 		}
 		$cloned = \@copy;
 	} elsif (ref $orig eq "HASH") {
 		my %copy = %$orig;
-		for (keys %copy) {
-			say $copy{$_};
-			if ($copy{$_} != $orig) { $copy{$_} = clone($copy{$_}) };
+		for (keys %copy) { 
+			if ( $copy{$_} != $orig ) {
+				$copy{$_} = clone($copy{$_});
+			} else { $copy{$_} = \%copy };
 		}
 		$cloned = \%copy;
 	} elsif (ref $orig eq "CODE") {
 		$cloned = undef;
-	} elsif (ref $orig eq "SCALAR") {
+	} else {
 		$cloned = $orig;
 	}
 
