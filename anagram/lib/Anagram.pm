@@ -5,6 +5,7 @@ use 5.016;
 use warnings;
 use utf8;
 
+
 =encoding UTF8
 
 
@@ -41,14 +42,10 @@ anagram(['пятак', 'ЛиСток', 'пятка', 'стул', 'ПяТаК', '
 
 =cut
 
-
-	# my %uniq;
-	# my @words_list = map { $uniq{lc $_}++ ? "" : lc $_ } @{+shift};
-
 sub anagram {
 
-	my $words_hash = { map { lc $_ => 1 } @{+shift} };
-	my @words_list = sort keys %$words_hash;
+	my %uniq;
+	my @words_list = map { $uniq{lc $_}++ ? () : lc $_ } @{+shift};
 
 	my %result = map { (join '', sort split //) => [] } @words_list;
 
