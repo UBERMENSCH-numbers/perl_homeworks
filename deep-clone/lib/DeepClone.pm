@@ -42,17 +42,17 @@ sub clone {
 	if (ref $orig eq "ARRAY") {
 		my @copy = @$orig;
 		for (@copy) {
-			if ($_ != $orig) {
-				$_ = clone($_);
-			} #else { $_ = \@copy };
+			# if ($_ != $orig) {
+			# 	$_ = clone($_);
+			# } else { $_ = \@copy };
 		}
 		$cloned = \@copy;
 	} elsif (ref $orig eq "HASH") {
 		my %copy = %$orig;
 		for (keys %copy) { 
-			if ( $copy{$_} != $orig ) {
-				$copy{$_} = clone($copy{$_});
-			}# else { $copy{$_} = \%copy };
+			# if ( $copy{$_} != $orig ) {
+			# 	$copy{$_} = clone($copy{$_});
+			# } else { $copy{$_} = \%copy };
 		}
 		$cloned = \%copy;
 	} elsif (ref $orig eq "CODE") {
