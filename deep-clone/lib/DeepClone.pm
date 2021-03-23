@@ -44,7 +44,7 @@ sub clone {
 		for (@copy) {
 			if ($_ != $orig) {
 				$_ = clone($_);
-			} else { $_ = \@copy };
+			} #else { $_ = \@copy };
 		}
 		$cloned = \@copy;
 	} elsif (ref $orig eq "HASH") {
@@ -52,7 +52,7 @@ sub clone {
 		for (keys %copy) { 
 			if ( $copy{$_} != $orig ) {
 				$copy{$_} = clone($copy{$_});
-			} else { $copy{$_} = \%copy };
+			}# else { $copy{$_} = \%copy };
 		}
 		$cloned = \%copy;
 	} elsif (ref $orig eq "CODE") {
