@@ -41,7 +41,7 @@ sub clone {
 	if (ref $orig eq "ARRAY") {
 		my @copy = @$orig;
 		for (@copy) { 
-			say $_;
+			# say $_;
 			if ($_ != $orig) { $_ = clone($_) };
 		}
 		$cloned = \@copy;
