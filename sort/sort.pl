@@ -1,6 +1,7 @@
 #!/usr/bin/env perl
 use 5.016;
 use feature 'fc';
+use warnings;
 
 sub unsuffix($) {
 	my $str = lc shift;
