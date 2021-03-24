@@ -24,14 +24,10 @@ use Data::Dumper;
 local $Data::Dumper::Indent = 0;
 
 # В качестве значения $orig следует использовать какую либо сложую структуру.
-my $orig = {
-	sv => "string",
-	av => [ qw(some elements) ],
-	hv => {
-		nested => "value",
-		key => [ 1,2,{} ],
-	},
-};
+
+my $orig = {1 => 2};
+$orig->{3} = $orig;
+
 my $cloned = DeepClone::clone($orig);
 say "ORIGINAL ", Dumper($orig);
 say "CLONED   ", Dumper($cloned);
