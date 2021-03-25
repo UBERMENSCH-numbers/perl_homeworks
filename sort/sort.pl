@@ -61,7 +61,7 @@ if ($keys_hash{'n'}) {
 	my @nums = grep { $_->[0] =~ /^\-?\d+$/ } @data;
 	my %excl_hash = map { $_->[0] => 1 } @nums;
 	my @chars = grep { !$excl_hash{ $_->[0] } } @data;
-	my @chars_sort = sort { $a->[0] cmp $b->[0] } @not_nums;
+	my @chars_sort = sort { $a->[0] cmp $b->[0] } @chars;
 	@chars_sort = map { [0, $_->[1]] } @chars_sort;
 	@data = sort { $a->[0] <=> $b->[0] } (@nums, @chars_sort);
 }
