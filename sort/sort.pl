@@ -68,7 +68,8 @@ if ($keys_hash{'n'}) {
 
 if ($keys_hash{'M'}) {
 	my %mon = (jan => 1, feb => 2, mar => 3, apr => 4, may => 5, jun => 6, jul => 7, aug => 8, sep => 9, oct => 10, nov => 11, dec => 12);
-	@data = sort { $mon{ lc substr($a->[0], 0, 3) } <=> $mon{ lc substr($b->[0], 0, 3) } } @data;
+	@data = sort { ($mon{ lc substr($a->[0], 0, 3) } || 0)
+		<=> ($mon{ lc substr($b->[0], 0, 3) } || 0) } @data;
 }
 
 if ($keys_hash{'r'}) {
