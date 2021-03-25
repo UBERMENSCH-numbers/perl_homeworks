@@ -60,19 +60,15 @@ if (!$keys_hash{'n'} && !$keys_hash{'M'}) {
 if ($keys_hash{'n'}) {
 	my @nums = grep { $_->[0] =~ /^\-?\d+$/ } @data;
 	my %excl_hash = map { $_->[0] => 1 } @nums;
-	my @not_nums = grep { !$excl_hash{ $_->[0] } } @data;
+	my @chars = grep { !$excl_hash{ $_->[0] } } @data;
 	my @chars_sort = sort { $a->[0] cmp $b->[0] } @not_nums;
 	@chars_sort = map { [0, $_->[1]] } @chars_sort;
-	my @nums_sort = sort { $a->[0] <=> $b->[0] } (@nums, @chars_sort);
-	@data = @nums_sort;
-	## проблема ноль больше пробела
+	@data = sort { $a->[0] <=> $b->[0] } (@nums, @chars_sort);
 }
 
 if ($keys_hash{'M'}) {
 	my %mon = (jan => 1, feb => 2, mar => 3, apr => 4, may => 5, jun => 6, jul => 7, aug => 8, sep => 9, oct => 10, nov => 11, dec => 12);
-	@data = sort { $mon{ lc substr($a->[0], 0, 3) } <=> $mon{ lc substr($b->[0], 0, 3) }
-		||
-	$b->[0] cmp $a->[0] } @data;
+	@data = sort { $mon{ lc substr($a->[0], 0, 3) } <=> $mon{ lc substr($b->[0], 0, 3) } } @data;
 }
 
 if ($keys_hash{'r'}) {
