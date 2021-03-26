@@ -38,7 +38,6 @@ sub clone {
 	my ($orig, $refs) = @_;
 	my %call_history;
 	if (defined $refs) { %call_history = %$refs };
-	
 
 	my $cloned;
 	if (ref $orig eq "ARRAY") {
@@ -71,7 +70,6 @@ sub clone {
 		$cloned = $orig;
 	}
 	
-
 	return $cloned;
 }
 
