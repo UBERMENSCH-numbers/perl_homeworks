@@ -43,33 +43,32 @@ sub clone {
 	if (ref $orig eq "ARRAY") {
 		my @copy = @$orig;
 		for (@copy) {
-			if ($call_history{$_}) {
+			if (defined $_ && $call_history{$_}) {
 				$_ = $call_history{$_};
 			} else {
-				my %call_history_ = %call_history;
-				$call_history_{$orig} = \@copy;
-				$_ = clone($_, \%call_history_);
+				my %call_history_next = %call_history;
+				$call_history_next{$orig} = \@copy;
+				$_ = clone($_, \%call_history_next);
 			}
 		}
 		$cloned = \@copy;
 	} elsif (ref $orig eq "HASH") {
 		my %copy = %$orig;
 		for (keys %copy) {
-			if ($call_history{$copy{$_}}) {
+			if (defined $copy{$_} && $call_history{$copy{$_}}) {
 				$copy{$_} = $call_history{$copy{$_}};
 			} else {
-				my %call_history_ = %call_history;
-				$call_history_{$orig} = \%copy;
-				$copy{$_} = clone($copy{$_}, \%call_history_);
+				my %call_history_next = %call_history;
+				$call_history_next{$orig} = \%copy;
+				$copy{$_} = clone($copy{$_}, \%call_history_next);
 			}
 		}
 		$cloned = \%copy;
 	} elsif (ref $orig eq "CODE") {
 		$cloned = undef;
-	} else { 
+	} else {
 		$cloned = $orig;
 	}
-	
 	return $cloned;
 }
 
