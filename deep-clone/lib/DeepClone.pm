@@ -39,27 +39,30 @@ sub clone {
 	my %call_history;
 	if (defined $refs) { %call_history = %$refs };
 	
-	# use Data::Dumper;
-	# say Dumper(%call_history);
 
 	my $cloned;
 	if (ref $orig eq "ARRAY") {
 		my @copy = @$orig;
-		$call_history{$orig} = \@copy;
 		for (@copy) {
 			if ($call_history{$_}) {
 				$_ = $call_history{$_};
-			} else {$_ = clone($_, \%call_history) };
-
+			} else {
+				my %call_history_ = %call_history;
+				$call_history_{$orig} = \@copy;
+				$_ = clone($_, \%call_history_);
+			}
 		}
 		$cloned = \@copy;
 	} elsif (ref $orig eq "HASH") {
 		my %copy = %$orig;
-		$call_history{$orig} = $orig;
 		for (keys %copy) {
 			if ($call_history{$copy{$_}}) {
-			$copy{$_} = $call_history{$_}; 
-			} else {$_ = clone($copy{$_}, \%call_history) };
+				$copy{$_} = $call_history{$copy{$_}}; 
+			} else {
+				my %call_history_ = %call_history;
+				$call_history_{$orig} = \%copy;
+				$_ = clone($copy{$_}, \%call_history_);
+			}
 		}
 		$cloned = \%copy;
 	} elsif (ref $orig eq "CODE") {
