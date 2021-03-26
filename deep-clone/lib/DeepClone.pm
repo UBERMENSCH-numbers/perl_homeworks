@@ -34,29 +34,38 @@ use warnings;
 
 =cut
 
-
 sub clone {
-	my $orig = shift;
-	my $cloned;
+	my ($orig, $refs) = @_;
+	my %call_history;
+	if (defined $refs) { %call_history = %$refs };
+	
+	# use Data::Dumper;
+	# say Dumper(%call_history);
 
+	my $cloned;
 	if (ref $orig eq "ARRAY") {
 		my @copy = @$orig;
+		$call_history{$orig} = \@copy;
 		for (@copy) {
-			if ($_ == $orig || $_ == \@copy) {
-				$_ = \@copy;
-			} else {$_ = clone($_) };
+			if ($call_history{$_}) {
+				$_ = $call_history{$_};
+			} else {$_ = clone($_, \%call_history) };
 
 		}
 		$cloned = \@copy;
 	} elsif (ref $orig eq "HASH") {
 		my %copy = %$orig;
+		$call_history{$orig} = $orig;
 		for (keys %copy) {
-			if ( $copy{$_} == $orig ) { $copy{$_} = \%copy };
+			if ($call_history{$copy{$_}}) {
+			$copy{$_} = $call_history{$_}; 
+			} else {$_ = clone($copy{$_}, \%call_history) };
 		}
 		$cloned = \%copy;
 	} elsif (ref $orig eq "CODE") {
 		$cloned = undef;
 	} else { $cloned = $orig };
+	
 
 	return $cloned;
 }
