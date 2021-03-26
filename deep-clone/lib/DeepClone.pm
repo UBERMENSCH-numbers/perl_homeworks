@@ -46,11 +46,9 @@ sub clone {
 		for (@copy) {
 			if ($call_history{$_}) {
 				$_ = $call_history{$_};
-				say "w";
 			} else {
 				my %call_history_ = %call_history;
 				$call_history_{$orig} = \@copy;
-				say "copy", $orig; 
 				$_ = clone($_, \%call_history_);
 			}
 		}
@@ -60,11 +58,9 @@ sub clone {
 		for (keys %copy) {
 			if ($call_history{$copy{$_}}) {
 				$copy{$_} = $call_history{$copy{$_}};
-				say "w";
 			} else {
 				my %call_history_ = %call_history;
 				$call_history_{$orig} = \%copy;
-				say "copy", $orig; 
 				$copy{$_} = clone($copy{$_}, \%call_history_);
 			}
 		}
@@ -73,7 +69,6 @@ sub clone {
 		$cloned = undef;
 	} else { 
 		$cloned = $orig;
-		say "copy", $orig;
 	}
 	
 
