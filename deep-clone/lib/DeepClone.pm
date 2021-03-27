@@ -35,18 +35,16 @@ use warnings;
 =cut
 
 sub clone {
-	my ($orig, $refs) = @_;
-	my %call_history;
-	if (defined $refs) { %call_history = %$refs };
+	my ($orig, $call_history) = @_;
 
 	my $cloned;
 	if (ref $orig eq "ARRAY") {
 		my @copy = @$orig;
 		for (@copy) {
-			if (defined $_ && $call_history{$_}) {
-				$_ = $call_history{$_};
+			if (defined $_ && $call_history->{$_}) {
+				$_ = $call_history->{$_};
 			} else {
-				my %call_history_next = %call_history;
+				my %call_history_next = %$call_history;
 				$call_history_next{$orig} = \@copy;
 				$_ = clone($_, \%call_history_next);
 			}
@@ -55,19 +53,19 @@ sub clone {
 	} elsif (ref $orig eq "HASH") {
 		my %copy = %$orig;
 		for (keys %copy) {
-			if (defined $copy{$_} && $call_history{$copy{$_}}) {
-				$copy{$_} = $call_history{$copy{$_}};
+			if (defined $copy{$_} && $call_history->{$copy{$_}}) {
+				$copy{$_} = $call_history->{$copy{$_}};
 			} else {
-				my %call_history_next = %call_history;
+				my %call_history_next = %$call_history;
 				$call_history_next{$orig} = \%copy;
 				$copy{$_} = clone($copy{$_}, \%call_history_next);
 			}
 		}
 		$cloned = \%copy;
-	} elsif (ref $orig eq "CODE") {
-		$cloned = undef;
-	} else {
+	} elsif (ref \$orig eq "SCALAR") {
 		$cloned = $orig;
+	} else {
+		$cloned = undef;
 	}
 	return $cloned;
 }
