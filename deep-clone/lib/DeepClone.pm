@@ -60,7 +60,7 @@ sub clone {
 			}
 		}
 		$cloned = \%copy;
-	} elsif(ref($ref)) {
+	} elsif (ref \$orig eq "SCALAR") {
 		$cloned = $orig;
 	} else {
 		$cloned = undef;
