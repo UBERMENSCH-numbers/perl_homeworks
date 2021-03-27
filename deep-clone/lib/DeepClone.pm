@@ -44,9 +44,8 @@ sub clone {
 			if (defined $_ && $call_history->{$_}) {
 				$_ = $call_history->{$_};
 			} else {
-				my %call_history_next = %$call_history;
-				$call_history_next{$orig} = \@copy;
-				$_ = clone($_, \%call_history_next);
+				$call_history->{$orig} = \@copy;
+				$_ = clone($_, $call_history);
 			}
 		}
 		$cloned = \@copy;
@@ -56,9 +55,8 @@ sub clone {
 			if (defined $copy{$_} && $call_history->{$copy{$_}}) {
 				$copy{$_} = $call_history->{$copy{$_}};
 			} else {
-				my %call_history_next = %$call_history;
-				$call_history_next{$orig} = \%copy;
-				$copy{$_} = clone($copy{$_}, \%call_history_next);
+				$call_history->{$orig} = \%copy;
+				$copy{$_} = clone($copy{$_}, $call_history);
 			}
 		}
 		$cloned = \%copy;
