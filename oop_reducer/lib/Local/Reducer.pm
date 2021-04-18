@@ -21,4 +21,16 @@ our $VERSION = '1.00';
 
 =cut
 
+sub new {
+    my $self = shift;
+    my %hash = @_;
+    $hash{reduced} = $hash{initial_value};
+    return bless \%hash, $self;
+}
+
+sub reduced {
+    my $self = shift;
+    return $self->{reduced};
+}
+
 1;
