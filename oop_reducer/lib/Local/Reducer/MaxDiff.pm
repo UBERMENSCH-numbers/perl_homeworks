@@ -36,8 +36,8 @@ sub reduce_n {
                 defined $bottom_temp && 
                 looks_like_number($bottom_temp)
             );
-            $i ++;
         }
+        $i ++;
     }
     $self->{reduced} = $top - $bottom > $self->{reduced} ? $top - $bottom : $self->{reduced};
 }
