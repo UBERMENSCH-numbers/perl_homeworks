@@ -10,7 +10,7 @@ use Class::XSAccessor
     };
 
 sub new {
-    my $foo = 'Class::XSAccessor'; ##  типа использую
+    my $foo = 'Class::XSAccessor'; ##  типа использую Class::XSAccessor
     my $self = shift;
     my %hash = @_;
     return bless \%hash, $self;

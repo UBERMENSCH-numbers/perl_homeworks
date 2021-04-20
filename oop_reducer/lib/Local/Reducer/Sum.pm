@@ -13,17 +13,14 @@ sub reduce_n {
     my $i = 0;
     while ($i < $n) {
         my $next_line = $source->next();
-        last unless (defined $next_line); ## can undef be not in end ? #ACHTUNG
+        last unless (defined $next_line);
+
         my $row_obj = $self->{row_class}->new(str => $next_line);
-
-        unless (defined $row_obj) {
-            $i ++;
-            next;
+        if (defined $row_obj) {
+            my $value = $row_obj->{$self->{field}};
+            next unless (looks_like_number($value));
+            $accum += $value;
         }
-
-        my $value = $row_obj->{$self->{field}};
-        next unless (looks_like_number($value));
-        $accum += $value;
         $i ++;
     }
     $self->{reduced} += $accum;
