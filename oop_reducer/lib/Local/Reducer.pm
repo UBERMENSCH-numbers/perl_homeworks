@@ -2,6 +2,8 @@ package Local::Reducer;
 
 use strict;
 use warnings;
+use Scalar::Util qw(looks_like_number);
+
 
 =encoding utf8
 

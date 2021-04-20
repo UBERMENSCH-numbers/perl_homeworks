@@ -17,7 +17,7 @@ sub new {
 
 sub remain {
     my $self = shift;
-    return $#{$self->{array}} - $self->{pos};
+    return $#{$self->{array}} - $self->{pos} + 1;
 }
 
 
