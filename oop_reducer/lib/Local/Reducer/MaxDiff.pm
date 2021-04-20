@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use Scalar::Util qw(looks_like_number);
 
-use parent "Local::Reducer";
+use parent 'Local::Reducer';
 
 sub reduce_n {
     my ($self, $n) = @_;
@@ -16,7 +16,6 @@ sub reduce_n {
         my $next_line = $source->next();
         last unless (defined $next_line); ## is empty string defined ? #ACHTUNG
         my $row_obj = $self->{row_class}->new(str => $next_line);
-        
         unless (defined $row_obj) {
             $i ++;
             next;

@@ -5,6 +5,7 @@ use warnings;
 use Scalar::Util qw(looks_like_number);
 
 use parent 'Local::Reducer';
+use Local::Reducer::MinMaxAvgStorage;
 
 sub reduce_n {
     my ($self, $n) = @_;
@@ -39,23 +40,4 @@ sub new {
     return $self->SUPER::new(%hash);
 }
 
-1;
-
-package Local::Reducer::MinMaxAvgStorage;
-
-use strict;
-use warnings;
-use Data::Dumper;
-use Class::XSAccessor
-    getters => {
-        get_max => 'max',
-        get_min => 'min',
-        get_avg => 'avg'
-    };
-
-sub new {
-    my $self = shift;
-    my %hash = @_;
-    return bless \%hash, $self;
-}
 1;
