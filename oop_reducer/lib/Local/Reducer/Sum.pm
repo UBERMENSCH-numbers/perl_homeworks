@@ -4,8 +4,6 @@ use strict;
 use warnings;
 use Scalar::Util qw(looks_like_number);
 
-use Data::Dumper;
-use feature 'say';
 use parent "Local::Reducer";
 
 sub reduce_n {
@@ -28,12 +26,7 @@ sub reduce_n {
         $i ++;
     }
     $self->{reduced} += $accum;
-    
-}
 
-sub reduce_all {
-    my $self = shift;
-    return $self->reduce_n($self->{source}->remain());
 }
 
 1;

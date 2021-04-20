@@ -4,8 +4,6 @@ use strict;
 use warnings;
 use Scalar::Util qw(looks_like_number);
 
-use Data::Dumper;
-use feature 'say';
 use parent "Local::Reducer";
 
 sub reduce_n {
@@ -26,7 +24,6 @@ sub reduce_n {
 
         my $top_temp = $row_obj->{$self->{top}};
         $top = $top_temp if (defined $top_temp && looks_like_number($top_temp) && $top_temp > $top);
-        
         my $bottom_temp = $row_obj->{$self->{bottom}};
         $bottom = $bottom_temp if (defined $bottom_temp && looks_like_number($bottom_temp) && $bottom_temp < $bottom);
 
@@ -34,11 +31,6 @@ sub reduce_n {
     }
     $self->{reduced} = $top - $bottom > $self->{reduced} ? $top - $bottom : $self->{reduced};
     ## negative value ? ##ACHTUNG
-}
-
-sub reduce_all {
-    my $self = shift;
-    return $self->reduce_n($self->{source}->remain());
 }
 
 1;

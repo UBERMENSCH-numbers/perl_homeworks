@@ -4,9 +4,6 @@ use strict;
 use warnings;
 use JSON qw(decode_json);
 
-use feature 'say';
-use Data::Dumper;
-
 sub new {
     my $self = shift;
     my %hash = @_;

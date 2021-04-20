@@ -2,8 +2,6 @@ package Local::Source::Text;
 
 use strict;
 use warnings;
-use Data::Dumper;
-use feature "say";
 
 sub next {
     my $self = shift;

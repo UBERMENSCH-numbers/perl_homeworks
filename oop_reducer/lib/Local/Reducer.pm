@@ -33,4 +33,10 @@ sub reduced {
     return $self->{reduced};
 }
 
+sub reduce_all {
+    my $self = shift;
+    return $self->reduce_n($self->{source}->remain());
+}
+
+
 1;
