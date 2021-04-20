@@ -38,5 +38,4 @@ sub reduce_all {
     return $self->reduce_n($self->{source}->remain());
 }
 
-
 1;

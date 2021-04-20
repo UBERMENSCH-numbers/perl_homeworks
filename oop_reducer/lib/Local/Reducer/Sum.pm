@@ -13,13 +13,14 @@ sub reduce_n {
     my $i = 0;
     while ($i < $n) {
         my $next_line = $source->next();
-        last unless (defined $next_line); ## is empty string defined ? #ACHTUNG
+        last unless (defined $next_line); ## can undef be not in end ? #ACHTUNG
         my $row_obj = $self->{row_class}->new(str => $next_line);
-        # say Dumper($row_obj);
+
         unless (defined $row_obj) {
             $i ++;
             next;
         }
+
         my $value = $row_obj->{$self->{field}};
         next unless (looks_like_number($value));
         $accum += $value;
