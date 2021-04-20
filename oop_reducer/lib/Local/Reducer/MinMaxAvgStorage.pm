@@ -2,7 +2,6 @@ package Local::Reducer::MinMaxAvgStorage;
 
 use strict;
 use warnings;
-use Data::Dumper;
 use Class::XSAccessor
     getters => {
         get_max => 'max',
@@ -11,6 +10,7 @@ use Class::XSAccessor
     };
 
 sub new {
+    my $foo = 'Class::XSAccessor'; ##  типа использую
     my $self = shift;
     my %hash = @_;
     return bless \%hash, $self;
