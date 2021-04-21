@@ -6,40 +6,21 @@ use Scalar::Util qw(looks_like_number);
 
 use parent 'Local::Reducer';
 
-sub reduce_n {
-    my ($self, $n) = @_;
-    my $source = $self->{source};
-    my $i = 0;
-    my ($top, $bottom) = ("-inf", "+inf");
-    while ($i < $n) {
-        my $next_line = $source->next();
-        last unless (defined $next_line);
+sub reduce {
+    my ($self, $row_obj) = @_;
+    my $top_temp = $row_obj->{$self->{top}};
+    my $bottom_temp = $row_obj->{$self->{bottom}};
 
-        my $row_obj = $self->{row_class}->new(str => $next_line);
-        if (defined $row_obj) {
-            my $top_temp = $row_obj->{$self->{top}};
-            my $bottom_temp = $row_obj->{$self->{bottom}};
+    return 0 unless (
+        defined $top_temp && 
+        defined $bottom_temp && 
+        looks_like_number($top_temp) && 
+        looks_like_number($bottom_temp)
+    );
+    
+    my $diff = $top_temp - $bottom_temp;
 
-            next if (
-                !(defined $top_temp && looks_like_number($top_temp)) && 
-                !(defined $bottom_temp && looks_like_number($bottom_temp))
-            );
-
-            $top = $top_temp if (
-                $top_temp > $top && 
-                defined $top_temp && 
-                looks_like_number($top_temp)
-            );
-
-            $bottom = $bottom_temp if (
-                $bottom_temp < $bottom && 
-                defined $bottom_temp && 
-                looks_like_number($bottom_temp)
-            );
-        }
-        $i ++;
-    }
-    $self->{reduced} = $top - $bottom > $self->{reduced} ? $top - $bottom : $self->{reduced};
+    $self->{reduced} = $diff > $self->{reduced} ? $diff : $self->{reduced}
 }
 
 1;

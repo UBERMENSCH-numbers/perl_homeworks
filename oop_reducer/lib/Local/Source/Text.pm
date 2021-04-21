@@ -8,10 +8,8 @@ use parent 'Local::Source::SourceAbstract';
 sub new {
     my $self = shift;
     my %hash = @_;
-    $hash{array} = [split $hash{delimiter} || "\n", $hash{text}];
-    $hash{pos} = 0;
-    delete $hash{text};
-    return bless \%hash, $self;
+    $hash{array} = [ split defined $hash{delimiter} ? delete $hash{delimiter} : "\n", delete $hash{text} ];
+    return $self->SUPER::new(%hash);
 }
 
 1;

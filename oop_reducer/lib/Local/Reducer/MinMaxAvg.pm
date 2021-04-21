@@ -7,25 +7,17 @@ use Scalar::Util qw(looks_like_number);
 use parent 'Local::Reducer';
 use Local::Reducer::MinMaxAvgStorage;
 
-sub reduce_n {
-    my ($self, $n) = @_;
-    my $source = $self->{source};
-    my $i = 0;
-    while ($i < $n) {
-        my $next_line = $source->next();
-        last unless (defined $next_line);
+sub reduce {
+    my ($self, $row_obj) = @_;
+    my $value = $row_obj->{$self->{field}};
 
-        my $row_obj = $self->{row_class}->new(str => $next_line);
-        if (defined $row_obj) {
-            my $value = $row_obj->{$self->{field}};
-            next unless (looks_like_number($value));
-            $self->{min} = $value if ($value < $self->{min});
-            $self->{max} = $value if ($value > $self->{max});
-            $self->{avg} = ($value + $self->{n} * $self->{avg})/($self->{n}+1);
-            $self->{n} ++;
-        }
-        $i ++;
-    }
+    return 0 unless (looks_like_number($value));
+    
+    $self->{min} = $value if ($value < $self->{min});
+    $self->{max} = $value if ($value > $self->{max});
+    $self->{avg} = ($value + $self->{n} * $self->{avg})/($self->{n}+1);
+    $self->{n} ++;
+
     $self->{reduced} = Local::Reducer::MinMaxAvgStorage->new(
         min => $self->{min}, 
         max => $self->{max}, 
