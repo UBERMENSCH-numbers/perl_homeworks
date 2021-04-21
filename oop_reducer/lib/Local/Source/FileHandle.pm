@@ -14,10 +14,10 @@ sub next {
     my $self = shift;
     my $fh = $self->{fh};
 
-    return undef if ($self->{end}); 
+    return undef if ($self->{end});
 
     while (my $line = <$fh>) {
-        $self->{end} = 1 if (eof); 
+        $self->{end} = 1 if (eof);
         if ($. == $self->{pos}+1) {
             $self->{pos} ++;
             chomp $line;
