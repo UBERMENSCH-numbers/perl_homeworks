@@ -12,7 +12,7 @@ sub reduce {
     my $value = $row_obj->{$self->{field}};
 
     return 0 unless (looks_like_number($value));
-    
+
     $self->{min} = $value if ($value < $self->{min});
     $self->{max} = $value if ($value > $self->{max});
     $self->{avg} = ($value + $self->{n} * $self->{avg})/($self->{n}+1);
