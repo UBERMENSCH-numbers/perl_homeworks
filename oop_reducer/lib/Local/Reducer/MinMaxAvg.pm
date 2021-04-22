@@ -14,10 +14,10 @@ sub reduce {
     return 0 unless (looks_like_number($value));
 
     if ($value < $self->{reduced}->get_min()) {
-        $self->{reduced}->set_min($value); 
+        $self->{reduced}->set_min($value);
     }
     if ($value > $self->{reduced}->get_max()) {
-        $self->{reduced}->set_max($value); 
+        $self->{reduced}->set_max($value);
     }
     $self->{reduced}->set_avg(($value + $self->{n} * $self->{reduced}->get_avg())/($self->{n}+1));
     $self->{n} ++;

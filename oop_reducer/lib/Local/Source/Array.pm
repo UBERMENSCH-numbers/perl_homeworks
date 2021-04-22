@@ -12,7 +12,7 @@ sub remain {
 
 sub next {
     my $self = shift;
-    return $self->{pos} <= $#{$self->{array}} ? $self->{array}->[$self->{pos}++] : undef; 
+    return $self->{pos} <= $#{$self->{array}} ? $self->{array}->[$self->{pos}++] : undef;
 }
 
 1;
