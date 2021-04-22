@@ -5,7 +5,7 @@ use warnings;
 
 sub get {
     my ($self, $name, $default) = @_;
-    return defined $self->{$name} ? $self->{$name} : $default;
+    return exists $self->{$name} ? $self->{$name} : $default;
 }
 
 1;

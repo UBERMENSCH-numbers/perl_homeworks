@@ -7,6 +7,11 @@ use Class::XSAccessor
         get_max => 'max',
         get_min => 'min',
         get_avg => 'avg'
+    },
+    setters => {
+        set_max => 'max',
+        set_min => 'min',
+        set_avg => 'avg'
     };
 
 sub new {

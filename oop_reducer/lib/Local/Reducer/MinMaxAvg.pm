@@ -13,25 +13,26 @@ sub reduce {
 
     return 0 unless (looks_like_number($value));
 
-    $self->{min} = $value if ($value < $self->{min});
-    $self->{max} = $value if ($value > $self->{max});
-    $self->{avg} = ($value + $self->{n} * $self->{avg})/($self->{n}+1);
+    if ($value < $self->{reduced}->get_min()) {
+        $self->{reduced}->set_min($value); 
+    }
+    if ($value > $self->{reduced}->get_max()) {
+        $self->{reduced}->set_max($value); 
+    }
+    $self->{reduced}->set_avg(($value + $self->{n} * $self->{reduced}->get_avg())/($self->{n}+1));
     $self->{n} ++;
-
-    $self->{reduced} = Local::Reducer::MinMaxAvgStorage->new(
-        min => $self->{min}, 
-        max => $self->{max}, 
-        avg => $self->{avg}
-    );
 }
 
 sub new {
     my $self = shift;
     my %hash = @_;
-    $hash{min} = "+inf";
-    $hash{max} = "-inf";
-    ($hash{avg}, $hash{n}) = (0) x 2;
-    return $self->SUPER::new(%hash);
+    $hash{reduced} = Local::Reducer::MinMaxAvgStorage->new(
+        min => "+inf", 
+        max => '-inf', 
+        avg => 0
+    );
+    $hash{n} = 0;
+    return bless \%hash, $self;
 }
 
 1;

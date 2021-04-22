@@ -10,8 +10,8 @@ sub new {
     my %hash = @_;
     my @data = split ",", $hash{str};
     for (@data) {
-            return undef if ((scalar split ":") != 2);
             $_ = [ split ":" ];
+            return undef unless (@$_ == 2);
     }
     my %data = map { $_->[0] => $_->[1] } @data;
     return bless \%data, $self;
