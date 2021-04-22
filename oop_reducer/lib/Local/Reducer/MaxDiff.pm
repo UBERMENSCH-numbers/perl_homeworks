@@ -12,12 +12,12 @@ sub reduce {
     my $bottom_temp = $row_obj->{$self->{bottom}};
 
     return 0 unless (
-        defined $top_temp && 
+        defined $top_temp &&
         defined $bottom_temp && 
         looks_like_number($top_temp) && 
         looks_like_number($bottom_temp)
     );
-    
+
     my $diff = $top_temp - $bottom_temp;
 
     $self->{reduced} = $diff > $self->{reduced} ? $diff : $self->{reduced}
