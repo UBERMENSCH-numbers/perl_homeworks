@@ -8,12 +8,13 @@ use parent 'Local::Row::RowAbstract';
 sub new {
     my $self = shift;
     my %hash = @_;
-    my @data = split ",", $hash{str};
-    for (@data) {
-            $_ = [ split ":" ];
-            return undef unless (@$_ == 2);
+    my %data;
+    for my $pair (split ",", $hash{str}) {
+        my @items = split ":", $pair;
+        return undef if @items != 2;
+        $data{$items[0]} = $items[1];
     }
-    my %data = map { $_->[0] => $_->[1] } @data;
+
     return bless \%data, $self;
 }
 
