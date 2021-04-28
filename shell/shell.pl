@@ -1,41 +1,51 @@
 use strict;
 use warnings;
 use Cwd qw(cwd);
+use Data::Dumper;
+use feature 'say';
 
-my @commands = split "|", @ARGV;
+my @commands = split '\|',  $ARGV[0];
 my @results;
 
-for my $i (0..@commands) {
+my $prev;
+for my $i (0..$#commands) {
     my @items = split " ", $commands[$i];
-    my $prev = "";
-    if ($items[0] eq "cd") {
+    print Dumper(\@items);
+    if ($items[$i] eq "cd") {
+        cd(@items);
         next;
-    } elsif ($items[0] eq "pwd") {
+    } elsif ($items[$i] eq "pwd") {
         $results[$i] = pwd();
         next;
-    } elsif ($items[0] eq "echo") {
+    } elsif ($items[$i] eq "echo") {
         $results[$i] = echo(@items);
         next;
-    } elsif ($items[0] eq "kill") {
-        $results[$i] = kill_(@items);
+    } elsif ($items[$i] eq "kill") {
+        kill_(@items);
         next
     } else {
-        $prev = $results[$i - 1] if ($i > 0);
-        $results[$i] = `$prev | $commands[$i]`;
+        if (defined $prev) {
+            $results[$i] = `$prev | $commands[$i]`;
+        } else {
+            $results[$i] = `$commands[$i]`;
+        }
     }
-    
+    $prev = $results[$i];
 }
 
+print Dumper(\@results);
+
+
 sub cd {
-    if (-d $_[1]) {
-        die "dir $_[1] already exists";
+    unless (-d $_[1]) {
+        die "dir $_[1] not exists";
     } else {
-        mkdir $_[1];
+        chdir("$_[1]") ;
     }
 }
 
 sub pwd {
-    return cwd;
+    return cwd();
 }
 
 sub echo {
@@ -44,5 +54,17 @@ sub echo {
 }
 
 sub kill_{
-    kill shift, @_;
+    shift;
+    my $sig = shift =~ tr/-//;
+    kill $sig, shift;
+}
+
+my $child_pid;
+if (!defined($child_pid = fork())) {
+  die "cannot fork: $!";
+
+} elsif ($child_pid) {
+    say "---parent---";
+} else {
+    say "---child---";
 }
