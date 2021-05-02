@@ -2,7 +2,7 @@ use strict;
 use warnings;
 use Cwd qw(cwd);
 use feature 'say';
-use Term::ANSIColor;
+use Term::ANSIColor 'color';
 
 $|=1;
 my %UTILS;
@@ -53,7 +53,6 @@ sub process {
 
 sub fork_exec {
     my ($command, $input, $output) = @_;
-    
     my $pid;
     if (defined $output) {
         die "could not fork\n" unless defined($pid = open(CHILD, "-|"));
@@ -71,7 +70,7 @@ sub fork_exec {
         return undef;
     } elsif ($pid == 0) {
         exec("echo '$input' | $command") if (defined $input);
-        exec($command); 
+        exec($command);
     }
 }
 
