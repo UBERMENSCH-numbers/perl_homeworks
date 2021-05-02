@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use IO::Socket;
+use IO::Socket::INET;
 use Getopt::Long;
 
 $| = 1;
