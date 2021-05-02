@@ -1,39 +1,21 @@
 use strict;
 use warnings;
 use Cwd qw(cwd);
-use Data::Dumper;
 use feature 'say';
 use Term::ANSIColor;
-use FileHandle;
 
 $|=1;
 my %UTILS;
-my @stopped = ();
-my $foreground;
-
-# $SIG{TSTP} = sub {
-#     say "catch";
-#     kill 23, $foreground or die "$foreground not found";
-#     push @stopped, $foreground;
-#     $foreground = 0;
-# };
-
-# $SIG{CONT} = sub {
-#     $foreground = pop @stopped;
-#     kill 25, $foreground or die "$foreground not found";
-# };
-
 
 %UTILS = (
     "cd" => \&cd,
     "pwd" => \&pwd,
     "echo" => \&echo,
     "kill" => \&kill_,
-    # "jobs" => \&jobs,
 );
 
 while (1) {
-    print color('bold green') . "[pShell " . color('bold white') . pwd() . color('bold green'). "]\$ ". color('reset');
+    print color('bold green') . "[▲ " . color('bold white') . pwd() . color('bold green'). "]\$ ". color('reset');
     my $input = <STDIN>;
     chomp $input;
 
@@ -80,7 +62,6 @@ sub fork_exec {
     }
 
     if ($pid) {
-        $foreground = $pid;
         waitpid $pid, 0;
         if (defined $output) {
             my @out = <CHILD>;
@@ -117,8 +98,4 @@ sub kill_{
     my $sig = shift =~ tr/-//;
     warn "process not found\n" unless (kill $sig, shift);
     return undef;
-}
-
-sub jobs {
-    say for (@stopped);
 }
