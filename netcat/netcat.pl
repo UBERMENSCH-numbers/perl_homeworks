@@ -1,21 +1,24 @@
 use strict;
 use warnings;
 use IO::Socket;
-use feature 'say';
+use Getopt::Long;
 
-my @message = <STDIN>;
-my $host = shift @ARGV;
-my $port = shift @ARGV;
+$| = 1;
+
+my ($tcp, $udp);
+GetOptions('tcp' => \$tcp, 'udp' => \$udp);
+my $proto = defined $udp ? "udp" : "tcp";
+
+my $port = (grep {/\d{1,6}/} @ARGV)[0];
+my $host = (grep {$_ ne $port} @ARGV)[0];
+
+my @input = <STDIN>;
 
 my $socket = IO::Socket::INET->new(
     PeerAddr => $host,
     PeerPort => $port,
-    Proto => "tcp",
+    Proto => $proto,
     Type => SOCK_STREAM
 ) or die "Can't connect to $host $/";
 
-print {$socket} join "", @message;
-
-while (<$socket>) {
-    print $_;
-} 
+print {$socket} join "", @input;
