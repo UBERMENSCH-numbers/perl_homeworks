@@ -36,7 +36,11 @@ sub process {
     for my $i (0..$#commands) {
         my @items = split " ", $commands[$i];
         if (defined $UTILS{$items[0]}) {
-            return $UTILS{$items[0]}(@items);
+            if ($i < $#commands) {
+                $input = $UTILS{$items[0]}(@items);
+            } else {
+                return $UTILS{$items[0]}(@items);
+            }
         } else {
             if ($i == 0 && $#commands != 0) {
                 $input = fork_exec($commands[$i], undef, $output);
