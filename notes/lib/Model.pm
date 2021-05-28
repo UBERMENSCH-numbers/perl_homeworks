@@ -4,6 +4,7 @@ use DBI;
 use strict;
 use warnings;
 use feature 'say';
+use Digest::MD5 'md5_hex';
  
 my $dbh = DBI->connect("dbi:SQLite:dbname=lib/notes.db","",""); 
 
@@ -30,8 +31,9 @@ sub login_user {
 sub new_note {
     shift;
     my ($title, $text, $user) = @_;
-    $dbh->do("INSERT INTO notes(title, text, user) values('$title', '$text', '$user')");
-    return $dbh->selectrow_array("SELECT last_insert_rowid() FROM notes");
+    my $id = md5_hex(rand());
+    $dbh->do("INSERT INTO notes(id, title, text, user) values('$id', '$title', '$text', '$user')");
+    return $id;
 
 }
 
@@ -43,18 +45,50 @@ sub add_share {
 
 sub edit_note {
     shift;
-    my ($id, $title, $text, $user) = @_;
-    $dbh->do(
-        "UPDATE notes
+    my ($id, $title, $text) = @_;
+    $dbh->do("
+        UPDATE notes
         set title = '$title',
             text = '$text'
-        WHERE id = $id");
+        WHERE id = $id"
+    );
 }
 
 sub edit_share {
     shift;
-    my ($id, $user) = @_;
-    $dbh->do("UPDATE share set VALUES('$id','$user')");
+    my $id = shift;
+    my @users = @{+shift};
+    
+    $dbh->do("DELETE FROM share WHERE id = '$id'");
+    $dbh->do("INSERT INTO share VALUES('$id','$_')") for @users;
+}
+
+sub get_user_notes {
+    shift;
+    my $user = shift;
+    return $dbh->selectall_arrayref("SELECT id, title FROM notes WHERE user = '$user'");
+}
+
+sub get_note {
+    shift;
+    my $id = shift;
+    return $dbh->selectrow_hashref("SELECT id, title, text, user FROM notes WHERE id = '$id'");
+}
+
+sub get_share {
+    shift;
+    my $id = shift;
+    return $dbh->selectcol_arrayref("SELECT user FROM share WHERE id = '$id'");
+}
+
+sub get_shared_by_user {
+    shift;
+    my $user = shift;
+    return $dbh->selectall_arrayref("
+        SELECT title, id, user
+        FROM notes
+        WHERE id in (SELECT id from share WHERE user = '$user')"
+    );
 }
 
 sub new {
@@ -62,3 +96,8 @@ sub new {
     my %params = @_;
     return bless \%params, $self;
 }
+
+# use Data::Dumper;
+# say Dumper(Model->get_note(17));
+# say Dumper(Model->get_share(17));
+# Model->edit_share(17, ["user1","user2","user3"]);

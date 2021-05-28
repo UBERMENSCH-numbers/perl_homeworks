@@ -1,0 +1,15 @@
+<p> <a href="/logout"> Logout </a> </p>
+Your notes:
+<hr>
+[% FOREACH id IN notes.keys %]
+    <!-- <p> [% note = notes.$id %] </p> -->
+    <p> <a href="/note?id=[% id %]"> [% notes.$id %] </a> </p>
+[% END %]
+<hr>
+Shared notes:
+<hr>
+[% FOREACH id IN notes_shared.keys %]
+    <p> <a href="/note?id=[% id %]"> [% notes_shared.$id.0 %] </a> by [% notes_shared.$id.1 %] </p>
+[% END %]
+<hr>
+<p> <a href="/new_note"> New note </p>

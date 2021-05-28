@@ -1,0 +1,29 @@
+
+[% IF readonly %]
+
+<form id='note-form' method='post'>
+   Note :
+   <br>
+   <textarea rows = "1" cols = "50" name = "note_title" readonly>[% note_title %]</textarea>
+   <br>
+   <textarea rows = "5" cols = "50" name = "note_text" readonly>[% note_text %]</textarea>
+   <br>
+   <textarea rows = "1" cols = "50" name = "note_share" readonly>[% note_share %]</textarea>
+   <br>
+</form>
+
+[% ELSE %]
+
+<form id='note-form' method='post'>
+   Note :
+   <br>
+   <textarea rows = "1" cols = "50" name = "note_title" required>[% note_title %]</textarea>
+   <br>
+   <textarea rows = "5" cols = "50" name = "note_text" required>[% note_text %]</textarea>
+   <br>
+   <textarea rows = "1" cols = "50" name = "note_share">[% note_share %]</textarea>
+   <br>
+   <button type='submit'>Save</button>
+</form>
+
+[% END %]
