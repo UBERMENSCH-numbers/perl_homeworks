@@ -48,10 +48,10 @@ engines:
 # Dancer apps on the same host then you will need to make sure 'cookie_name'
 # is different for each app.
 #
-#engines:
-#  session:
-#    Simple:
-#      cookie_name: testapp.session
+engines:
+ session:
+   Simple:
+     cookie_name: testapp.session
 #
 #engines:
 #  session:
@@ -60,11 +60,11 @@ engines:
 #      is_secure: 1
 #      is_http_only: 1
 
-plugins:
-  Databse:
-    driver: 'SQLite'
-    database: 'notes.db'
-    dbi_params:
-      RaiseError: 1
-      AutoCommit: 1
-    log_querie s: 1   
+# plugins:
+#   Databse:
+#     driver: 'SQLite'
+#     database: 'notes.db'
+#     dbi_params:
+#       RaiseError: 1
+#       AutoCommit: 1
+#     log_querie s: 1  подключение из Model.pm

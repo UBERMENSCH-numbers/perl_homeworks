@@ -7,9 +7,7 @@
    <textarea rows = "1" cols = "50" name = "note_title" readonly>[% note_title %]</textarea>
    <br>
    <textarea rows = "5" cols = "50" name = "note_text" readonly>[% note_text %]</textarea>
-   <br>
-   <textarea rows = "1" cols = "50" name = "note_share" readonly>[% note_share %]</textarea>
-   <br>
+   <br>  
 </form>
 
 [% ELSE %]
