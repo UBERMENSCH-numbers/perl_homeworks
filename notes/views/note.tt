@@ -12,16 +12,29 @@
 
 [% ELSE %]
 
-<form id='note-form' method='post'>
-   Note :
-   <br>
-   <textarea rows = "1" cols = "50" name = "note_title" required>[% note_title %]</textarea>
-   <br>
-   <textarea rows = "5" cols = "50" name = "note_text" required>[% note_text %]</textarea>
-   <br>
-   <textarea rows = "1" cols = "50" name = "note_share">[% note_share %]</textarea>
-   <br>
-   <button type='submit'>Save</button>
-</form>
-
+   [% IF placeholder %]
+   <form id='note-form' method='post'>
+      Note :
+      <br>
+      <textarea rows = "1" cols = "50" name = "note_title" required placeholder="Title"></textarea>
+      <br>
+      <textarea rows = "5" cols = "50" name = "note_text" required placeholder="text"></textarea>
+      <br>
+      <textarea rows = "1" cols = "50" name = "note_share" placeholder="user1,user2..."></textarea>
+      <br>
+      <button type='submit'>Save</button>
+   </form>
+   [% ELSE %]
+   <form id='note-form' method='post'>
+      Note :
+      <br>
+      <textarea rows = "1" cols = "50" name = "note_title" required>[% note_title %]</textarea>
+      <br>
+      <textarea rows = "5" cols = "50" name = "note_text" required>[% note_text %]</textarea>
+      <br>
+      <textarea rows = "1" cols = "50" name = "note_share">[% note_share %]</textarea>
+      <br>
+      <button type='submit'>Save</button>
+   </form>
+   [% END %]
 [% END %]

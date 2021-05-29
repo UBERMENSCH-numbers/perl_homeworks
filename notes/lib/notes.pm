@@ -113,9 +113,7 @@ any ['get', 'post'] => '/new_note' => sub {
         redirect '/';
     }
     template 'note', { 
-        note_title => "Title",
-        note_text => "text",
-        note_share => "user1,user2"
+        placeholder => 1,
     };
 };
 
