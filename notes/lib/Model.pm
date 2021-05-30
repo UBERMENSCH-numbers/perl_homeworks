@@ -4,7 +4,7 @@ use DBI;
 use strict;
 use warnings;
 use Digest::MD5 'md5_hex';
- 
+
 my $dbh = DBI->connect("dbi:SQLite:dbname=../notes/notes.db","","",{ sqlite_unicode => 1 });
 
 sub register_user {
@@ -58,7 +58,7 @@ sub edit_share {
     shift;
     my $id = shift;
     my @users = @{+shift};
-    
+
     $dbh->do("DELETE FROM share WHERE id = ?", undef, $id);
     $dbh->do("INSERT INTO share VALUES(?, ?)", undef, $id, $_) for @users;
 }

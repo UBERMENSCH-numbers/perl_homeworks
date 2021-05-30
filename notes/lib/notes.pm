@@ -58,7 +58,7 @@ get '/' => sub {
     my %notes;
     for (@{$notes}) {
         my ($id, $title) = @{$_};
-        $notes{$id} = $title; 
+        $notes{$id} = $title;
     }
     my %shared;
     for (@{$share}) {
