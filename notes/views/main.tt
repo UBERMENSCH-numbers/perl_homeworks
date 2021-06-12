@@ -1,0 +1,18 @@
+Username : [% username %]
+<p> <a href="/logout"> Logout </a> </p>
+Your notes:
+<hr>
+[% FOREACH id IN notes.keys %]
+    <form action="/delete_note?id=[% id %]" method="post">
+    <input type="submit" name="del" value="X" />
+    <a href="/note?id=[% id %]"> [% notes.$id %] </a>
+    </form>
+[% END %]
+<hr>
+Shared notes:
+<hr>
+[% FOREACH id IN notes_shared.keys %]
+    <p> <a href="/note?id=[% id %]"> [% notes_shared.$id.0 %] </a> by [% notes_shared.$id.1 %] </p>
+[% END %]
+<hr>
+<p> <a href="/new_note"> New note </p>
