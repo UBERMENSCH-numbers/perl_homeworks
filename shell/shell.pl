@@ -15,90 +15,84 @@ my %UTILS;
 );
 
 while (1) {
-    print color('bold green') . "[▲ " . color('bold white') . pwd() . color('bold green'). "]\$ ". color('reset');
+    print color('bold green') . "[▲ " . color('bold white') . cwd() . color('bold green'). "]\$ ". color('reset');
     my $input = <STDIN>;
     chomp $input;
-
     next unless (defined $input && $input ne "");
-
-    my $output = process($input);
-    if (defined $output) {
-        chomp $output;
-        say $output;
-    }
+    process($input);
 }
 
 
 sub process {
-    my @commands = split /\Q|\E/, $_[0];
-    my ($output, $input) = (1, 1);
+    my @commands = split /(?<!["'\\])[|](?!["'])/, $_[0];
+
+    pipe(my $child_in, my $child_in_w);
+    pipe(my $child_out, my $child_out_w);
+
+    my @pids;
 
     for my $i (0..$#commands) {
-        my @items = split " ", $commands[$i];
-        if (defined $UTILS{$items[0]}) {
-            if ($i < $#commands) {
-                $input = $UTILS{$items[0]}(@items);
-            } else {
-                return $UTILS{$items[0]}(@items);
-            }
+        $child_in = 0 if ($i == 0);
+        $child_out_w = 0 if ($i == $#commands);
+
+        if ($UTILS{(split / /, $commands[$i])[0] }) {
+            $UTILS{(split / /, $commands[$i])[0] }($commands[$i], $child_in, $child_out_w);
         } else {
-            if ($i == 0 && $#commands != 0) {
-                $input = fork_exec($commands[$i], undef, $output);
-            } elsif ($i != 0 && $i == $#commands) {
-                return fork_exec($commands[$i], $input, undef);
-            } elsif ($i != 0 && $i != $#commands) {
-                $input = fork_exec($commands[$i], $input, $output);
-            } else {
-                return fork_exec($commands[$i], undef, undef);
-            }
-        }  
-    }      
+            push @pids, fork_exec($commands[$i], $child_in, $child_out_w);
+        }
+
+        $child_in = $child_out;
+        undef $child_out;
+        undef $child_out_w;
+        pipe ($child_out, $child_out_w);
+    }
+    waitpid $_, 0 for (@pids);
+
+    close $child_in_w;
 }
 
 sub fork_exec {
-    my ($command, $input, $output) = @_;
-    my $pid;
-    if (defined $output) {
-        die "could not fork\n" unless defined($pid = open(CHILD, "-|"));
+    my ($cmd, $child_in, $child_out_w) = @_;
+    my $pid = fork();
+    if ($pid){
+        return $pid;
     } else {
-        die "could not fork\n" unless defined($pid = fork());
-    }
-
-    if ($pid) {
-        waitpid $pid, 0;
-        if (defined $output) {
-            my @out = <CHILD>;
-            close(CHILD);
-            return join "", @out
-        }
-        return undef;
-    } elsif ($pid == 0) {
-        exec("echo '$input' | $command") if (defined $input);
-        exec($command);
+        open(STDOUT, ">&", $child_out_w) if ($child_out_w);
+        open(STDIN, '<&', $child_in) if ($child_in);
+        exec($cmd);
     }
 }
 
 sub cd {
-    unless (-d $_[1]) {
-        warn "dir $_[1] not exists\n";
+    my $dir = (split / /, shift)[1];
+    unless (-d $dir) {
+        warn "dir $dir not exists\n";
     } else {
-        chdir("$_[1]") ;
+        chdir("$dir");
     }
-    return undef;
 }
 
 sub pwd {
-    return cwd();
+    my $child_out_w = $_[2];
+    if ($child_out_w) {
+        print {$child_out_w} cwd();
+    } else {
+        print cwd() . "\n";
+    }
 }
 
 sub echo {
-    shift;
-    return join " ", @_;
+    my @echo = (split / /, $_[0]);
+    shift @echo;
+    my $child_out_w = $_[2];
+    if ($child_out_w) {
+        print {$child_out_w} join " ", @echo;
+    } else {
+        print join(" ", @echo) , "\n";
+    }
 }
 
 sub kill_{
-    shift;
-    my $sig = shift =~ tr/-//;
-    warn "process not found\n" unless (kill $sig, shift);
-    return undef;
+    my @params = split /[- ]/, $_[0];
+    warn "process not found\n" unless (kill $params[-2], $params[-1]);
 }
