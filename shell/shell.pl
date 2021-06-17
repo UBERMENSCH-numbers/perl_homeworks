@@ -59,7 +59,7 @@ sub fork_exec {
     } else {
         open(STDOUT, ">&", $child_out_w) if ($child_out_w);
         open(STDIN, '<&', $child_in) if ($child_in);
-        exec($cmd);
+        exec($cmd) || die "exec failed";
     }
 }
 
