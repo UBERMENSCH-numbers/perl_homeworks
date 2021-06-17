@@ -1,0 +1,9 @@
+<form id='register-form' action="" method='post'>
+    <input type="text" placeholder="Username" required name=username>
+    <input type="password" placeholder="Password" required name=password>
+    <button type='submit'>Register</button>
+</form>
+
+<p>
+    Or <a href="/login">Login</a>
+</p>
