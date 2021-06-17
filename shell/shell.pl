@@ -25,9 +25,10 @@ while (1) {
 
 sub process {
     my @commands = split /(?<!["'\\])[|](?!["'])/, $_[0];
-
-    pipe(my $child_in, my $child_in_w);
-    pipe(my $child_out, my $child_out_w);
+    my ($child_in, $child_in_w);
+    pipe($child_in, $child_in_w);
+    my ($child_out, $child_out_w);
+    pipe($child_out, $child_out_w);
 
     my @pids;
 
