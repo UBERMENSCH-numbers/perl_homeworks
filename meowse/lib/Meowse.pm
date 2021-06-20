@@ -2,9 +2,7 @@ package Meowse;
 
 use strict;
 use warnings;
-use Data::Dumper;
 use Exporter 'import';
-use Scalar::Util qw(looks_like_number);
 use feature 'say';
 use Carp ();
 our @EXPORT = qw(has new extends __fields__ before after around);
@@ -44,7 +42,7 @@ sub has {
 
         return $self->{$field};
     }
-    
+
 }
 
 sub extends {
@@ -79,7 +77,7 @@ sub new {
     for (@required) {
         die "$_ is required at $self\n" if (!$params{$_} && !$attr{$_}{lazy});
     }
-    return $inst = bless \%params, $self;   
+    return $inst = bless \%params, $self;
 }
 
 sub before {

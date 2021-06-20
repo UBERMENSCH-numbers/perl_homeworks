@@ -5,7 +5,6 @@ use warnings;
 use FindBin;
 use lib "/home/user/v.kotelnik/meowse/lib";
 use Meowse;
-use Data::Dumper;
 
 extends "Parent";
 
@@ -53,7 +52,7 @@ before('before_rw_req' => sub {
 
 around('multiply_2' => sub {
     my ($orig, $self, $arg) = @_;
-    return ref \$arg ne "SCALAR" ? "arg must be scalar" : $orig->($arg); 
+    return ref \$arg ne "SCALAR" ? "arg must be scalar" : $orig->($arg);
 });
 
 
