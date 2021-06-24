@@ -53,7 +53,7 @@ sub extends {
     no strict 'refs';
     eval "require $parent";
     die "cant compile $parent\n" if ($@);
-    @{*{"${package}::ISA"}{ARRAY}} = ('Parent'); 
+    @{*{"${package}::ISA"}{ARRAY}} = ('Parent');
 
     my @attr = keys %{$attr{$parent}};
     for (@attr) {
