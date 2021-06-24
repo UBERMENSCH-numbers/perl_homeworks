@@ -2,8 +2,6 @@ package Class;
 
 use strict;
 use warnings;
-use FindBin;
-use lib "/home/user/v.kotelnik/meowse/lib";
 use Meowse;
 
 extends "Parent";

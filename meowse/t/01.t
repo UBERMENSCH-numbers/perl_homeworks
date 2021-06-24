@@ -1,6 +1,8 @@
+
 use Test::More;
 use Test::Exception;
-use lib "/home/user/v.kotelnik/meowse/lib";
+use FindBin;
+use lib "$FindBin::Bin/../lib";
 use Class;
 
 subtest new => sub {
@@ -86,7 +88,6 @@ subtest before_after_around => sub {
     is($obj->before_rw_req, "after_parent_sub", "check field modified2");
     is($obj->multiply_2(2), 4, "check around1");
     is($obj->multiply_2([1,2,3,4]), "arg must be scalar", "check around2");
-
 };
 
 done_testing();

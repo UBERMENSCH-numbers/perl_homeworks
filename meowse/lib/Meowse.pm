@@ -3,42 +3,42 @@ package Meowse;
 use strict;
 use warnings;
 use Exporter 'import';
-use feature 'say';
 use Carp ();
-our @EXPORT = qw(has new extends __fields__ before after around);
+our @EXPORT = qw(has new extends before after around);
 $SIG{__DIE__} = \&Carp::confess;
 
 my %attr;
-my $inst;
+my %inst;
 
 sub has {
     my $field = shift;
-    die "incorrect args\n" if (ref \$field ne 'SCALAR' || @_ % 2 != 0 || @_ < 2);
-    my %params = @_;
-    $attr{$field} = \%params;
     my $self = caller;
+
+    die "field $field already exists" if ($attr{$self}{$field});
+    die "incorrect args\n" if (ref $field || @_ % 2 || !@_ || !($field =~ /^[_a-zA-Z]\w*$/));
+    my %params = @_;
+    $attr{$self}{$field} = \%params;
 
     no strict 'refs';
     if ($params{lazy_build}) {
-        $attr{$field}{lazy} = 1;
-        $attr{$field}{builder} = "_build_$field";
-        $attr{$field}{clearer} = "clear_$field";
-        *{$self . "::clear_$field"} = sub { delete $_[0]->{$field} };
-        $attr{$field}{predicate} = "has_$field";
-        *{$self . "::has_$field"} = sub { defined ($_[0]->{$field}) ? 1 : 0};
+        $attr{$self}{$field}{lazy} = 1;
+        $attr{$self}{$field}{builder} = "_build_$field";
+        $attr{$self}{$field}{clearer} = "clear_$field";
+        *{"${self}::clear_${field}"} = sub { delete $_[0]->{$field} };
+        $attr{$self}{$field}{predicate} = "has_$field";
+        *{"${self}::has_${field}"} = sub { exists ($_[0]->{$field}) ? 1 : 0};
     }
 
-    my $sub = $self . '::' . $field;
-    *$sub = sub {
+    *{"${self}::$field"} = sub {
         my ($self, $val) = @_;
-        my $builder = $attr{$field}{builder};
-        my $predicate = $attr{$field}{predicate};
+        my $package = ref $self;
+        my $builder = $attr{$package}{$field}{builder};
+        my $predicate = $attr{$package}{$field}{predicate};
 
-        $self->{$field} = $self->$builder() if ($attr{$field}{lazy} && ! $self->$predicate());
-
-        die "attr $field is bare\n" if ($attr{$field}{is} eq "bare");
-        die "attr $field is immutable\n" if (defined $val && $attr{$field}{is} ne "rw");
-        $self->{$field} = $val if (defined $val);
+        $self->{$field} = $self->$builder() if ($attr{$package}{$field}{lazy} && ! $self->$predicate());
+        die "attr $field is bare\n" if ($attr{$package}{$field}{is} eq "bare");
+        die "attr $field is immutable\n" if (@_ > 1 && $attr{$package}{$field}{is} ne "rw");
+        $self->{$field} = $val if (@_ > 1);
 
         return $self->{$field};
     }
@@ -46,75 +46,78 @@ sub has {
 }
 
 sub extends {
-    die "parent name must be SCALAR\n" if (ref \$_[0] ne "SCALAR" || @_ > 1);
+    die "parent name must be SCALAR\n" if (ref $_[0] || @_ > 1);
     my $parent = $_[0];
-    my ($package, undef, undef) = caller;
+    my $package = caller;
 
     no strict 'refs';
     eval "require $parent";
+    die "cant compile $parent\n" if ($@);
+    @{*{"${package}::ISA"}{ARRAY}} = ('Parent'); 
 
-    my @methods = grep { defined &{$parent . "::" . $_} && !defined  &{$package . "::" . $_}} keys %{$parent . "::"};
-    for (@methods) {
-        *{$package . "::" . $_} = \&{$parent . "::" . $_};
+    my @attr = keys %{$attr{$parent}};
+    for (@attr) {
+        $attr{$package}{$_} = $attr{$parent}{$_};
     }
-}
-
-sub __fields__ {
-    return %attr;
 }
 
 sub new {
     my $self = shift;
+    die "parameter must be hash or hashref\n" unless ((!ref $_[0] && !(@_ % 2)) || ref $_[0] eq "HASH");
+    for (@_) {
+        die "all args must be defined" if (!defined);
+    }
 
-    die "parameter must be hash or hashref\n" unless ((ref \$_[0] eq "SCALAR" and @_ % 2 == 0) or ref $_[0] eq "HASH");
     my %params = ref $_[0] eq "HASH" ? %{$_[0]} : @_;
-
     for my $key (keys %params) {
-        die "undexpected $key\n" if (!defined $attr{$key});
+        die "undexpected $key\n" if (!defined $attr{$self}{$key});
     }
 
-    my @required = grep { $attr{$_}{required} } keys %attr;
+    my @required = grep { $attr{$self}{$_}{required} } keys %{$attr{$self}};
     for (@required) {
-        die "$_ is required at $self\n" if (!$params{$_} && !$attr{$_}{lazy});
+        die "$_ is required at $self\n" if (!$params{$_} && !$attr{$self}{$_}{lazy});
     }
-    return $inst = bless \%params, $self;
+
+    return $inst{$self} = bless \%params, $self;
 }
 
 sub before {
-    die "first argument must be scalar, second - sub" if (ref \$_[0] ne "SCALAR" or ref $_[1] ne "CODE");
+    die "first argument must be scalar, second - sub" if (ref $_[0] or ref $_[1] ne "CODE");
     my ($name, $before_sub) = @_;
-    my ($package, undef, undef) = caller;
+    my $package = caller;
     no strict 'refs';
-    *{$package . "::_OLD_" . $name} = *{$package."::$name"}{CODE};
-    *{$package . "::" . $name} = sub {
-        &$before_sub($inst);
-        return &{$package . "::_OLD_" . $name}(@_);
+    my $func = $package->can($name);
+    die "no such function ${package}::${name}" unless ($func);
+    *{"${package}::$name"} = sub {
+        $before_sub->($inst{$package});
+        return $func->(@_);
     }
 }
 
 sub after {
-    die "first argument must be scalar, second - sub" if (ref \$_[0] ne "SCALAR" or ref $_[1] ne "CODE");
+    die "first argument must be scalar, second - sub" if (ref $_[0] or ref $_[1] ne "CODE");
     my ($name, $after_sub) = @_;
-    my ($package, undef, undef) = caller;
+    my $package = caller;
     no strict 'refs';
-    *{$package . "::_OLD_" . $name} = *{$package."::$name"}{CODE};
+    my $func = $package->can($name);
+    die "no such function ${package}::${name}" unless ($func);
     *{$package . "::" . $name} = sub {
-        my $ret = &{$package . "::_OLD_" . $name}(@_);
-        &$after_sub($inst);
+        my $ret = $func->(@_);
+        $after_sub->($inst{$package});
         return $ret;
     }
 }
 
 sub around {
-    die "first argument must be scalar, second - sub" if (ref \$_[0] ne "SCALAR" or ref $_[1] ne "CODE");
+    die "first argument must be scalar, second - sub" if (ref $_[0] or ref $_[1] ne "CODE");
     my ($name, $around_sub) = @_;
-    my ($package, undef, undef) = caller;
+    my $package = caller;
     no strict 'refs';
-    *{$package . "::_OLD_" . $name} = *{$package."::$name"}{CODE};
-    *{$package . "::" . $name} = sub {
-        my $orig = \&{$package . "::_OLD_" . $name};
+    my $func = $package->can($name);
+    die "no such function ${package}::${name}" unless ($func);
+    *{"${package}::$name"} = sub {
         shift @_;
-        return &$around_sub($orig, $inst, @_);
+        return $around_sub->($func, $inst{$package}, @_);
     }
 }
 
