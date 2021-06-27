@@ -35,19 +35,14 @@ sub multiply_2 {
 
 after('parent_sub_override' => sub {
     my $self = shift;
-    # $self = 'Class';
-    $self->before_rw_req("after_parent_sub_override");
 });
 
 after('parent_sub' => sub {
     my $self = shift;
-    $self->before_rw_req("after_parent_sub");
 });
 
 before('before_rw_req' => sub {
-    my $self = shift;
-    $self->rw_req(10);
-    
+    my $self = shift;    
 });
 
 around('multiply_2' => sub {

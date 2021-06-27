@@ -31,10 +31,8 @@ sub has {
     }
 
     *{"${self}::$field"} = sub {
-        # use Data::Dumper;
-        # print Dumper(@_, $self, $field);
         my ($self, $val) = @_;
-        my $package = ref $self ? ref $self : $self;
+        my $package = ref $self;
         my $builder = $attr{$package}{$field}{builder};
         my $predicate = $attr{$package}{$field}{predicate};
 
