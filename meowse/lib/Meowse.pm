@@ -1,3 +1,4 @@
+
 package Meowse;
 
 use strict;
@@ -5,7 +6,7 @@ use warnings;
 use Exporter 'import';
 use Carp ();
 our @EXPORT = qw(has new extends before after around);
-$SIG{__DIE__} = \&Carp::confess;
+local $SIG{__DIE__} = \&Carp::confess;
 
 my %attr;
 my %inst;
@@ -30,8 +31,10 @@ sub has {
     }
 
     *{"${self}::$field"} = sub {
+        # use Data::Dumper;
+        # print Dumper(@_, $self, $field);
         my ($self, $val) = @_;
-        my $package = ref $self;
+        my $package = ref $self ? ref $self : $self;
         my $builder = $attr{$package}{$field}{builder};
         my $predicate = $attr{$package}{$field}{predicate};
 
@@ -53,7 +56,7 @@ sub extends {
     no strict 'refs';
     eval "require $parent";
     die "cant compile $parent\n" if ($@);
-    @{*{"${package}::ISA"}{ARRAY}} = ('Parent');
+    @{"${package}::ISA"} = ($parent);
 
     my @attr = keys %{$attr{$parent}};
     for (@attr) {
@@ -64,20 +67,17 @@ sub extends {
 sub new {
     my $self = shift;
     die "parameter must be hash or hashref\n" unless ((!ref $_[0] && !(@_ % 2)) || ref $_[0] eq "HASH");
-    for (@_) {
-        die "all args must be defined" if (!defined);
-    }
 
     my %params = ref $_[0] eq "HASH" ? %{$_[0]} : @_;
     for my $key (keys %params) {
-        die "undexpected $key\n" if (!defined $attr{$self}{$key});
+        die "unexpected $key\n" if (!defined $key || !defined $attr{$self}{$key});
     }
 
-    my @required = grep { $attr{$self}{$_}{required} } keys %{$attr{$self}};
+    my @required = grep {$attr{$self}{$_}{required}} keys %{$attr{$self}};
     for (@required) {
-        die "$_ is required at $self\n" if (!$params{$_} && !$attr{$self}{$_}{lazy});
+        die "$_ is required at $self\n" if (!exists $params{$_} && !$attr{$self}{$_}{lazy});
     }
-
+    
     return $inst{$self} = bless \%params, $self;
 }
 
@@ -89,7 +89,7 @@ sub before {
     my $func = $package->can($name);
     die "no such function ${package}::${name}" unless ($func);
     *{"${package}::$name"} = sub {
-        $before_sub->($inst{$package});
+        $before_sub->($package);
         return $func->(@_);
     }
 }
@@ -103,7 +103,7 @@ sub after {
     die "no such function ${package}::${name}" unless ($func);
     *{$package . "::" . $name} = sub {
         my $ret = $func->(@_);
-        $after_sub->($inst{$package});
+        $after_sub->($package);
         return $ret;
     }
 }
@@ -117,7 +117,7 @@ sub around {
     die "no such function ${package}::${name}" unless ($func);
     *{"${package}::$name"} = sub {
         shift @_;
-        return $around_sub->($func, $inst{$package}, @_);
+        return $around_sub->($func, $package, @_);
     }
 }
 
