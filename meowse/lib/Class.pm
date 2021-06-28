@@ -35,20 +35,24 @@ sub multiply_2 {
 
 after('parent_sub_override' => sub {
     my $self = shift;
+    $self->before_rw_req("after_parent_sub_override");
 });
 
 after('parent_sub' => sub {
     my $self = shift;
+    $self->before_rw_req("after_parent_sub");
 });
 
 before('before_rw_req' => sub {
-    my $self = shift;    
+    my $self = shift;
+    $self->rw_req(10);
 });
 
 around('multiply_2' => sub {
     my ($orig, $self, $arg) = @_;
     return ref \$arg ne "SCALAR" ? "arg must be scalar" : $orig->($arg);
 });
+
 
 
 no Meowse;

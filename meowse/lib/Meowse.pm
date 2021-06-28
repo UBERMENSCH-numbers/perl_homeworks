@@ -1,4 +1,3 @@
-
 package Meowse;
 
 use strict;
@@ -13,34 +12,31 @@ my %inst;
 
 sub has {
     my $field = shift;
-    my $self = caller;
+    my $package = caller;
 
-    die "field $field already exists" if ($attr{$self}{$field});
+    die "field $field already exists" if ($attr{$package}{$field});
     die "incorrect args\n" if (ref $field || @_ % 2 || !@_ || !($field =~ /^[_a-zA-Z]\w*$/));
     my %params = @_;
-    $attr{$self}{$field} = \%params;
+    $attr{$package}{$field} = \%params;
 
     no strict 'refs';
     if ($params{lazy_build}) {
-        $attr{$self}{$field}{lazy} = 1;
-        $attr{$self}{$field}{builder} = "_build_$field";
-        $attr{$self}{$field}{clearer} = "clear_$field";
-        *{"${self}::clear_${field}"} = sub { delete $_[0]->{$field} };
-        $attr{$self}{$field}{predicate} = "has_$field";
-        *{"${self}::has_${field}"} = sub { exists ($_[0]->{$field}) ? 1 : 0};
+        $attr{$package}{$field}{lazy} = 1;
+        $attr{$package}{$field}{builder} = "_build_$field";
+        $attr{$package}{$field}{clearer} = "clear_$field";
+        *{"${package}::clear_${field}"} = sub { delete $_[0]->{$field} };
+        $attr{$package}{$field}{predicate} = "has_$field";
+        *{"${package}::has_${field}"} = sub { exists ($_[0]->{$field}) ? 1 : 0};
     }
 
-    *{"${self}::$field"} = sub {
+    my $builder = $attr{$package}{$field}{builder};
+    my $predicate = $attr{$package}{$field}{predicate};
+    *{"${package}::$field"} = sub {
         my ($self, $val) = @_;
-        my $package = ref $self;
-        my $builder = $attr{$package}{$field}{builder};
-        my $predicate = $attr{$package}{$field}{predicate};
-
         $self->{$field} = $self->$builder() if ($attr{$package}{$field}{lazy} && ! $self->$predicate());
         die "attr $field is bare\n" if ($attr{$package}{$field}{is} eq "bare");
         die "attr $field is immutable\n" if (@_ > 1 && $attr{$package}{$field}{is} ne "rw");
         $self->{$field} = $val if (@_ > 1);
-
         return $self->{$field};
     }
 
@@ -54,7 +50,7 @@ sub extends {
     no strict 'refs';
     eval "require $parent";
     die "cant compile $parent\n" if ($@);
-    @{"${package}::ISA"} = ($parent);
+    push @{"${package}::ISA"}, $parent;
 
     my @attr = keys %{$attr{$parent}};
     for (@attr) {
@@ -87,8 +83,9 @@ sub before {
     my $func = $package->can($name);
     die "no such function ${package}::${name}" unless ($func);
     *{"${package}::$name"} = sub {
-        $before_sub->($package);
-        return $func->(@_);
+        my $self = shift;
+        $before_sub->($self);
+        return $self->$func(@_);
     }
 }
 
@@ -100,8 +97,9 @@ sub after {
     my $func = $package->can($name);
     die "no such function ${package}::${name}" unless ($func);
     *{$package . "::" . $name} = sub {
-        my $ret = $func->(@_);
-        $after_sub->($package);
+        my $self = shift;
+        my $ret = $self->$func(@_);
+        $after_sub->($self);
         return $ret;
     }
 }
@@ -114,8 +112,8 @@ sub around {
     my $func = $package->can($name);
     die "no such function ${package}::${name}" unless ($func);
     *{"${package}::$name"} = sub {
-        shift @_;
-        return $around_sub->($func, $package, @_);
+        my $self = shift;
+        return $around_sub->($func, $self, @_);
     }
 }
 
